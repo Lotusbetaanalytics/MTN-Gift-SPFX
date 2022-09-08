@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Gothic+A1&display=swap");
+@font-face {
+  font-family: "MTNBrighterSans-Medium";
+  src: url("https://mtncloud.sharepoint.com/sites/UATApplications/MTNComplianceUniverse/MTNCU/MTNBrighterSans-Medium.eot");
+  src: url("https://mtncloud.sharepoint.com/sites/UATApplications/MTNComplianceUniverse/MTNCU/MTNBrighterSans-Medium.woff")
+    format("woff");
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  // font-family: 'Gothic A1', sans-serif;
+  font-family: MTNBrighterSans-Medium;
+}
+.home {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  background: url("./assets/background.jpg");
+  background-size: cover;
+  background-position: right;
+  padding: 10rem;
+  flex-direction: column;
+  color: white;
+
+  img {
+    width: 10%;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 5rem;
+  }
+
+  h3 {
+    font-size: 2rem;
+  }
+  h5 {
+    font-size: 1rem;
+    color: black;
+  }
+}

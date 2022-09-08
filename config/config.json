@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "mtn-gift-solution-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/mtnGiftSolution/MtnGiftSolutionWebPart.js",
+          "manifest": "./src/webparts/mtnGiftSolution/MtnGiftSolutionWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "MtnGiftSolutionWebPartStrings": "lib/webparts/mtnGiftSolution/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+  }
+}

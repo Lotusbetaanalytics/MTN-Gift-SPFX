@@ -1,0 +1,13 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "environment": "spo",
+    "version": "1.13.1",
+    "libraryName": "mtn-gift-solution",
+    "libraryId": "dad2db64-6f01-462b-9424-802ef2afd747",
+    "packageManager": "npm",
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
