@@ -1,0 +1,28 @@
+.menubar {
+    display: flex;
+    padding: .5rem;
+    overflow: hidden;
+}
+
+.menu {
+    display: flex;
+    padding: 1rem 3rem;
+    justify-content: center;
+    align-items: center;
+    background: whitesmoke;
+    text-decoration: none;
+    color: black;
+}
+
+.menu:hover {
+    background: rgba(255, 196, 35, 1);
+    border-bottom: 2px solid black;
+    color: black;
+    transform: scale(1.1);
+}
+
+.active {
+    background: rgba(255, 196, 35, 1);
+    border-bottom: 2px solid black;
+    color: black;
+}

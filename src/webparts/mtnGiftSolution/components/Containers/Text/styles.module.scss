@@ -1,0 +1,23 @@
+.textContainer{
+    display: flex;
+    flex-direction: row;
+    padding: .5rem 0.5rem ;
+}
+.textContainer p{
+  font-size: 14px;
+    color: #4b4a49;
+}
+.textContainer h5{
+    color: black;
+    font-size: 14px;
+    width: 50%
+}
+.small {
+    flex-basis: 32%;
+  }
+  .medium {
+    width: 50%;
+  }
+  .large {
+    flex-basis: 100%;
+  }

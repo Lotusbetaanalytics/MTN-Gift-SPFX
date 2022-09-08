@@ -1,0 +1,158 @@
+.app{
+    width: 100%;
+    height: 100vh;
+     background: url('../../assets/hand.png');
+     background-size: cover;
+    // padding: 10rem;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   align-items: center;
+   padding: 0;
+}
+.header{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-left: 2rem;
+    width: 100%;
+    margin: 0;
+    
+}
+.header_logo{
+    display: flex;
+    margin-top: 20px;
+    height: 80px;
+    width: 80px;
+    
+}
+.header_logo img{
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+}
+.liner{
+    display: flex;
+    background: rgba(255, 204, 0, 0.38);
+    width: 100%;
+    padding-top: 30px;
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+}
+.mtn__banner{
+    width: 100%;
+    display: flex;
+    padding: 2rem 2rem;
+    background: rgba(255, 196, 35, 1);
+    align-self: flex-end;
+    justify-content: space-around;
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+}
+
+.mtn__logoContainer{
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo{display: flex;margin-right: 1rem;}
+.logo img{width:100px;height:100px;object-fit: contain;}
+.text{display: flex;flex-direction: column}
+.text h3{
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    font-weight: 600;
+    padding-top: 20px;
+    color: rgba(0, 0, 0, 0.72);
+
+}
+.text h1{font-size: 2.5rem;
+    margin-top: 5px;
+    margin-bottom: 2px;
+    color: rgba(0, 0, 0, 1);
+}
+.btnContainer{
+    display: flex;
+    align-self: center;justify-content: center;align-items: center;
+}
+///page two
+.appContainer {
+display: flex;
+height: 100vh;
+background: white;
+
+}
+.left{
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+     background: url('https://mtncloud.sharepoint.com/:i:/r/sites/MTNAppDevelopment/mtngiftcollectionsolution/Shared%20Documents/gift.png?csf=1&web=1&e=CmE3d5');
+     background-position: center;
+     
+    // padding: 10rem;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   padding: 0;
+  }
+
+.pageCard {
+    background-color: white;
+    font-size: 16px;
+    text-decoration: none;
+    display: flex;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 1rem;
+    margin-right: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 7px rgba(118, 117, 117, 0.25);
+  }
+  .pageCard:hover {
+    background-color: #ffc423;
+  }
+  .pageCard a{
+    text-decoration: none;
+  }
+  .hal{
+    display: flex;
+   padding-top: 10%;
+    flex-direction: column;
+  }
+  
+  .up{
+    display: flex;
+    height: 70vh;
+  }
+  .down{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 2%;
+    margin-top: 20px;
+  }
+  .half{
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1%;
+  }
+  
+  .center_logo{
+    display: flex;
+    width: 100px;
+    height: 50px;
+    margin-left: 100px;
+  }
+  .center_logo img{
+    width: 100%;
+    height: 100%;
+  }

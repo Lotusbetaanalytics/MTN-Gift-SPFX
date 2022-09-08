@@ -5,7 +5,24 @@ import { Route, Switch, HashRouter } from "react-router-dom";
 import * as jQuery from "jquery";
 import "./global.scss";
 import "./assets/icon.scss";
-import { Home } from "./screens";
+import { Home, Homepage } from "./screens";
+import {
+  AdminViewDocument,
+  AdminViewReport,
+  configDivision,
+  configLocation,
+  configRole,
+  DocumentPage,
+  EmployeePickLocation,
+  EmployeePickLocationEdit,
+  LocationReport,
+  LocationResult,
+  LocationView,
+  Pickup,
+  Report,
+  Roles,
+  UploadDocument,
+} from "./screens";
 
 export default class MtnGiftSolution extends React.Component<
   IMtnGiftSolutionProps,
@@ -20,6 +37,51 @@ export default class MtnGiftSolution extends React.Component<
         <HashRouter>
           <Switch>
             <Route path="/" exact component={Home} />
+            <Route path="/home" exact component={Homepage} />
+            <Route
+              path="/admin/document/upload"
+              exact
+              component={UploadDocument}
+            />
+            <Route path="/admin/document" exact component={DocumentPage} />
+            <Route
+              path="/admin/document/:id"
+              exact
+              component={AdminViewDocument}
+            />
+            <Route path="/admin/pickup" exact component={Pickup} />
+            <Route path="/admin/report" exact component={Report} />
+            <Route path="/admin/report/:id" exact component={AdminViewReport} />
+            <Route
+              path="/admin/config"
+              exact
+              render={(props) => <Roles context={this.props.context} />}
+            />
+            <Route path="/admin/division" exact component={configDivision} />
+            <Route path="/admin/location" exact component={configLocation} />
+            <Route path="/admin/roles" exact component={configRole} />
+            {/* <Route path="/locationchampion/search" exact component={LocationSearch} /> */}
+            <Route path="/locationchampion" exact component={LocationResult} />
+            <Route
+              path="/locationchampion/report"
+              exact
+              component={LocationReport}
+            />
+            <Route
+              path="/locationchampion/report/view/:id"
+              exact
+              component={LocationView}
+            />
+            <Route
+              path="/employee/location"
+              exact
+              component={EmployeePickLocation}
+            />
+            <Route
+              path="/employee/location/edit"
+              exact
+              component={EmployeePickLocationEdit}
+            />
           </Switch>
         </HashRouter>
       </>

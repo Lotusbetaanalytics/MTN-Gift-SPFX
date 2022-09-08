@@ -23,11 +23,14 @@
     "@pnp/spfx-controls-react": "^3.6.0",
     "axios": "^0.26.1",
     "jquery": "^3.6.0",
+    "echarts": "^5.3.2",
+    "echarts-for-react": "^3.0.2",
     "material-table": "^1.69.3",
     "react-icons": "^4.3.1",
     "react-router-dom": "^5.3.0",
     "sp-pnp-js": "^3.0.10",
-    "sweetalert": "^2.1.2"
+    "sweetalert": "^2.1.2",
+    "xlsx": "^0.17.5"
   },
   "devDependencies": {
     "@types/react": "16.9.51",

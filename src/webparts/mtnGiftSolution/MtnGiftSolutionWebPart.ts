@@ -6,7 +6,7 @@ import {
   PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-
+import { sp } from "@pnp/sp/presets/all";
 import * as strings from 'MtnGiftSolutionWebPartStrings';
 import MtnGiftSolution from './components/MtnGiftSolution';
 import { IMtnGiftSolutionProps } from './components/IMtnGiftSolutionProps';
@@ -16,12 +16,20 @@ export interface IMtnGiftSolutionWebPartProps {
 }
 
 export default class MtnGiftSolutionWebPart extends BaseClientSideWebPart<IMtnGiftSolutionWebPartProps> {
+  public onInit(): Promise<void> { 
+  
+    sp.setup({
+      spfxContext: this.context
+    });
+    return Promise.resolve(); 
+  }
 
   public render(): void {
     const element: React.ReactElement<IMtnGiftSolutionProps> = React.createElement(
       MtnGiftSolution,
       {
-        description: this.properties.description
+        context: this.context,
+        pageContext: this.context.pageContext,
       }
     );
 

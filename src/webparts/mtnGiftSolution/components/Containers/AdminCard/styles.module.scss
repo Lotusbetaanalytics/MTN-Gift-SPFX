@@ -1,0 +1,66 @@
+.mtn__cards {
+    display: flex;
+    flex-basis: 30%;
+    text-decoration: none;
+    justify-content: space-between;
+    background: white;
+    box-shadow: 0px 4px 10px 4px #0000000D;
+    border-radius: 5px;
+    padding: 2rem 1.5rem;
+    margin-bottom: 1rem;
+}
+
+
+.mtn__icons {
+    color: #006993;
+    display: flex;
+    flex-direction: row;
+    flex: 0.4;
+    padding: .5rem 1rem;
+    border-radius: 5px;
+    align-items: center;
+}
+
+
+.mtn__icons svg {
+    font-size: 3rem;
+    margin: 0 auto;
+}
+
+.mtn__text {
+    color: #006993;
+    display: flex;
+    flex-direction: column;
+    flex: 0.6;
+    h3{
+        font-size: 2.5rem;
+    }
+    h5{
+        font-size: 13px;
+    }
+}
+.yellow{
+    color: #006993;
+}
+
+
+@media screen and (max-width: 1050px) {
+    .mtn__cards {
+        flex-basis: 30%;
+        text-decoration: none;
+    }
+  }
+  
+  @media screen and (max-width: 700px) {
+    .mtn__cards {
+        flex-basis: 31%;
+        text-decoration: none;
+    }
+  }
+  
+  @media screen and (max-width: 550px) {
+    .mtn__cards {
+        flex-basis: 98%;
+        text-decoration: none;
+    }
+  }

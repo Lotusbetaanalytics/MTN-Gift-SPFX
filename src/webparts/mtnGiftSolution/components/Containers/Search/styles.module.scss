@@ -1,0 +1,30 @@
+.pageTitle {
+    display: flex;
+    padding: .2rem .5rem;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 18px;
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.25);
+    width: 100%;
+    margin-top: 8px;
+    background-color: rgb(255, 255, 255);
+}
+
+.title {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.search {
+    display: flex;
+    background: white;
+    padding: .6rem 1rem;
+    align-items: center;
+}
+
+.search input {
+    outline: none;
+    border: none;
+    margin-left: 1rem;
+    width: 80%;
+}

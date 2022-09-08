@@ -1,0 +1,21 @@
+.header{
+    display: flex;
+    font-size: 20px;
+    color: black;
+    padding: 1rem;
+    margin-bottom: .5rem;
+    justify-content: space-between;
+}
+.title{
+    display: flex;
+}
+.info{
+    display: flex;
+    flex-direction: column;
+}
+.info h3{
+    font-size: 14px;
+}
+.info p{
+    font-size: 11px;
+}

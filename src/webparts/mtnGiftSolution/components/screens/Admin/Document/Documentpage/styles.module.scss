@@ -1,0 +1,51 @@
+.imageContainer {
+    display: flex;
+  
+    flex-direction: column;
+  
+    justify-content: center;
+  
+    align-items: center;
+  
+    width: 50%;
+  
+    height: 300px;
+    margin-top: 4rem;
+  }
+  
+  .imgBox {
+    display: flex;
+  
+    justify-content: center;
+  
+    align-items: center;
+  
+    height: 150px;
+  
+    width: 150px;
+  
+    border-radius: 50%;
+  
+    background-color: #c4c4c44f;
+  
+    margin-bottom: 40px;
+  }
+  .imgBox img {
+    display: flex;
+    height: 50%;
+    width: 50%;
+    object-fit: contain;
+  }
+  
+  .uploadBtn {
+    width: 60%;
+  
+    display: flex;
+  
+    justify-content: center;
+  
+    align-items: center;
+  
+    height: 50px;
+  }
+  

@@ -1,0 +1,33 @@
+.mtn__header {
+  display: flex;
+  width: 100%;
+  margin-top: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem .5rem;
+  //   text-align: center;
+  font-weight: bold;
+}
+
+
+.mtn__header__text {
+  display: flex;
+
+  
+  h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+}
+
+.userEmail{
+  display: flex;
+  
+
+  h3 {
+    font-size: .8rem;
+    text-align: center;
+  }
+}
+
+
