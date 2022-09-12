@@ -38,7 +38,7 @@ const Document = () => {
   const [ID, setID] = React.useState("");
   const [uniqueNumber, setUniqueNumber] = React.useState("");
   const [pickupLocation, setPickupLocation] = React.useState("");
-  const [pickupPerson, setPickupPerson] = React.useState("");
+  const [pickupPersonSetting, setPickupPersonSetting] = React.useState("");
   const editHandler = () => {
     history.push("/employee/location/edit");
   };
@@ -85,8 +85,8 @@ const Document = () => {
         .items.get()
         .then((res) => {
           setPickupLocation(res[2].Switch);
-          setPickupPerson(res[3].Switch);
-          console.log(res);
+          setPickupPersonSetting(res[3].Switch);
+          console.log(res[3].Switch)
         });
         
       sp.web.lists
@@ -94,6 +94,7 @@ const Document = () => {
         .items.get()
         .then((res) => {
           setLocations(res);
+          console.log(Locations)
           setLoading(false);
         });
     });
@@ -120,12 +121,14 @@ const Document = () => {
       .then((res) => {
         setLoading(false);
         swal("Success", "Successfull", "success");
+        history.push("/home")
         sp.web.lists
           .getByTitle(`GiftBeneficiaries`)
           .items.filter(`Email eq '${Email}' `)
           .get()
           .then((res) => {
             setApprovalStatus(res[0].ApprovalStatus);
+           
           });
       })
       .catch((e) => {
@@ -210,7 +213,8 @@ const Document = () => {
                 value={Collector}
                 options={collectorOption}
                 size="mtn__adult"
-                readOnly={approvalStatus === null  || pickupPerson ==="On" ? false : true}
+                readOnly={approvalStatus === null ? false: false}
+                disabled={pickupPersonSetting === "Off" ? true : false}
               />
             </div>
 

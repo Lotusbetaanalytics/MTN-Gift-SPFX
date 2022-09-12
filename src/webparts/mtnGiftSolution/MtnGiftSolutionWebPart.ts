@@ -23,11 +23,12 @@ export default class MtnGiftSolutionWebPart extends BaseClientSideWebPart<IMtnGi
     });
     return Promise.resolve(); 
   }
-
+  pro;
   public render(): void {
     const element: React.ReactElement<IMtnGiftSolutionProps> = React.createElement(
       MtnGiftSolution,
       {
+        description: this.properties.description,
         context: this.context,
         pageContext: this.context.pageContext,
       }

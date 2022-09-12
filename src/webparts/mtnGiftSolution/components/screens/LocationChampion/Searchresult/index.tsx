@@ -44,6 +44,7 @@ const Document = () => {
   const [date, setDate] = React.useState("");
   const [time, setTime] = React.useState("");
   const [ID, setID] = React.useState("");
+  const [blank, setBlank] = React.useState(false);
 
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
@@ -118,12 +119,45 @@ const Document = () => {
           setID(res[0].ID);
           if (res.length > 0) {
             setQuery(true)
+          } else {
+            setBlank(true)
           }
           setCollectionStatus(res[0].CollectionStatus);
         });
     
   }, [time, phone]);
 
+  const clickHandler = () =>{
+    setQuery(false)
+    sp.web.lists
+        .getByTitle(`GiftBeneficiaries`)
+        .items.filter(`ApprovalStatus eq 'Approved' and Phone eq '${phone}'`)
+        .get()
+        .then((res) => {
+          console.log(res);
+          setLoading(false)
+          setPhone(res[0].Phone);
+          setSurname(res[0].Surname);
+          setFirstName(res[0].FirstName);
+          setJobTitle(res[0].JobTitle);
+          setEmail(res[0].Email);
+          setLocation(res[0].EmployeeLocation);
+          setPickupLocation(res[0].PickupLocation);
+          setPickupPerson(res[0].PickupPerson);
+          setDelegateFullname(res[0].DelegateFullname);
+          setDelegatePhone(res[0].DelegatePhone);
+          setDivision(res[0].Division);
+          setVendor(res[0].Vendor);
+          setUniqueCode(res[0].UniqueCode)
+          setID(res[0].ID);
+          if (res.length > 0) {
+            setQuery(true)
+          } else {
+            setBlank(true)
+          }
+          setCollectionStatus(res[0].CollectionStatus);
+        });
+  }
   const openUpadate = () => {
     setModal(true);
   };
@@ -141,8 +175,7 @@ const Document = () => {
         LocationChampionEmail: employeeEmail,
         CollectedBy: pickupPerson,
         ProxyType: proxyType,
-      }).then(()=>{
-
+      })
     sp.web.lists
       .getByTitle("Report")
       .items.add({
@@ -176,7 +209,7 @@ const Document = () => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
       })
-    });
+  
   };
   const handler = (e) => {
     e.preventDefault();
@@ -196,6 +229,7 @@ const Document = () => {
         <div className="spaceBetween">
           <div>
             <Search
+            click={clickHandler}
               value={phone}
               onchange={handler}
               type={"Tel"}
@@ -214,7 +248,8 @@ const Document = () => {
         <div className={styles.header}>
           <h3>Employee Details</h3>
         </div>
-       {loading? <Spinner/> : query ? <div
+       {loading? <Spinner/> : query ?
+        <div
           style={{
             display: "flex",
             flexDirection: "column",

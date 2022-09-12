@@ -49,7 +49,7 @@ const Pickup = () => {
 
   const [employeeEmail, setEmployeeEmail] = React.useState("");
   const [data, setData] = React.useState([]);
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = React.useState("Pending");
   const [email, setEmail] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [edit, setEdit] = React.useState(false);
@@ -146,6 +146,7 @@ const Pickup = () => {
           .get()
           .then((res) => {
             setData(res);
+            setModal(false)
           });
       })
       .catch((e) => {

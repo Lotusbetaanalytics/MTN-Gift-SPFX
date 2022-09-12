@@ -1,11 +1,13 @@
 import * as React from "react";
-import { FileUpload, Header, Navigation, Search, Sidebar } from "../../../../Containers";
+import { FileUpload, Header, Input, Navigation, Search, Select, Sidebar } from "../../../../Containers";
 import styles from "./styles.module.scss";
 import { sp } from "@pnp/sp";
 import Text from "../../../../Containers/Text";
 import { useHistory } from "react-router-dom";
 import swal from "sweetalert";
 import Spinner from "../../../../Containers/Spinner";
+import Modal from "../../../../Containers/Modal";
+import Division from "../../config/notification";
 
 
 
@@ -26,6 +28,7 @@ const Document = ({match}) => {
   const [vendor, setVendor] = React.useState("");
   const [loading,setLoading]=React.useState(false)
   const [updateStatus,setUpdateStatus] = React.useState("")
+  const [modal,setModal] = React.useState(false)
   const itemID = match.params.id
 
   React.useEffect(() => {
@@ -71,8 +74,45 @@ const Document = ({match}) => {
             })
   }, []);
 
+  const modalHandler = ()=>{
+    setModal(true)
+  }
+
   const backHandler = ()=>{
-    history.push("/admin/document")
+     history.push("/admin/document")
+  }
+const pickupOption = [
+  {value: "Self"},
+  {value:"Delegate"}
+]
+  const editHandler = (e) =>{
+    setLoading(true)
+    e.preventDefault()
+    sp.web.lists.getByTitle(`GiftBeneficiaries`).items.getById(itemID).update({
+        Phone:phone,
+        Surname:surname,
+        FirstName:FirstName,
+        JobTitle:jobTitle,
+        Email:Email,
+        Department:Department,
+        EmployeeLocation:location,
+        PickupLocation:pickupLocation,
+        PickupPerson:pickupPerson,
+        Division:division,
+        Vendor:vendor, 
+        UpdateStatus: "Approved"
+    }).then((res) => {
+      setModal(false)
+      setLoading(false)
+        swal("Success", "Update Successfull", "success");
+        sp.web.lists.getByTitle(`GiftBeneficiaries`).items.filter(`ID eq '${itemID}'`).get().then
+        ((res) => {
+          setUpdateStatus(res[0].UpdateStatus)
+        })
+    }).catch((e) => {
+        swal("Warning!", "An Error Occured, Try Again!", "error");
+        console.error(e);
+    });
   }
 
   const updateHandler = (e) =>{
@@ -99,7 +139,7 @@ const Document = ({match}) => {
       <div className="contentsRight">
         <Header title={"Document"} userEmail={employeeEmail} />
         <div className="spaceBetween">
-          <div></div>
+          <div> <button onClick={backHandler} className="mtn__btn mtn__black"> Back</button></div>
           <Navigation document="active" />
         </div>
         <div className={styles.header}><h3>Employee Details</h3></div>
@@ -109,6 +149,7 @@ const Document = ({match}) => {
          <Text title={"First Name"} value={FirstName} size={"medium"} />
          <Text title={"Job Title"} value={jobTitle} size={"medium"} />
          <Text title={"Email"} value={Email} size={"medium"} />
+         {/* <Text title={"Department"} value={Department} size={"medium"} /> */}
          <Text title={"Location"} value={location} size={"medium"} />
          <Text title={"Pickup Location"} value={pickupLocation} size={"medium"} />
          <Text title={"Pickup Person"} value={pickupPerson} size={"medium"} />
@@ -116,7 +157,9 @@ const Document = ({match}) => {
          <Text title={"Vendor"} value={vendor} size={"medium"} />
 
           <div style={{width:"40%",display:"flex",flexDirection:"row",justifyContent:"space-between",marginTop:"2rem"}}> 
-            <button onClick={backHandler} className="mtn__btn mtn__black"> Back</button>
+            <button onClick={modalHandler}  disabled={updateStatus === "Approved" ? true : false} className= {updateStatus === "Approved" ? "mtn__btn mtn__blackOutline" : "mtn__btn mtn__white"}> 
+            Edit
+            </button>
             <button onClick={updateHandler}
             disabled={updateStatus === "Approved" ? true : false}
             className= {updateStatus === "Approved" ? "mtn__btn mtn__blackOutline" : "mtn__btn mtn__yellow" }
@@ -124,6 +167,144 @@ const Document = ({match}) => {
           </div>
         </div>}
       </div>
+      <Modal
+        isVisible={modal}
+        title=""
+        size="sm"
+        content={
+          <form onSubmit={editHandler}>
+              <div>
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required={true}
+                  title={"Phone"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={surname}
+                  onChange={(e) => setSurname(e.target.value)}
+                  required={false}
+                  title={"Surname"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div>
+                 <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={FirstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required={false}
+                  title={"FirstName"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div>
+                <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                  required={false}
+                  title={"Job Title"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div>
+                <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={Email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required={false}
+                  title={"Email"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div>
+                {/* <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={Department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  required={false}
+                  title={"Department"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div> */}
+                <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  required={false}
+                  title={"Location"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div>
+                <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={pickupLocation}
+                  onChange={(e) => setPickupLocation(e.target.value)}
+                  required={false}
+                  title={"Pickup Location"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div>
+                <div style={{ marginTop: "1rem" }}>
+                  <Select
+                    value={pickupPerson}
+                    onChange={(e) => setPickupPerson(e.target.value)}
+                    required={false}
+                    title={"Pick up Person"}
+                    options={pickupOption}
+                  />
+                </div>
+                <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={vendor}
+                  onChange={(e) => setVendor(e.target.value)}
+                  required={false}
+                  title={"Vendor"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div>
+                <div style={{ marginTop: "1rem" }}>
+                <Input
+                  value={division}
+                  onChange={(e) => setDivision(e.target.value)}
+                  required={false}
+                  title={"Division"}
+                  readOnly={false}
+                  size={"sm"}
+                  type={"text"}
+                />
+                </div>
+                <button
+                  style={{ marginTop: "1rem" }}
+                  type="submit"
+                  className="mtn__btn mtn__yellow"
+                >
+                  Submit
+                </button>
+              </div>
+            
+          </form>
+        }
+        onClose={() => setModal(false)}
+        footer=""
+      />
     </div>
   );
 };

@@ -11,6 +11,7 @@ const Select = ({
   onBlur = null,
   size = "mtn__child",
   readOnly = false,
+  disabled = false
 }) => {
   return (
     <div className={`mtn__InputContainer ${size}`}>
@@ -23,6 +24,7 @@ const Select = ({
         // defaultValue={title}
         onBlur={onBlur}
         required={required}
+        disabled={disabled}
       >
         <option value="" disabled>
           {title}

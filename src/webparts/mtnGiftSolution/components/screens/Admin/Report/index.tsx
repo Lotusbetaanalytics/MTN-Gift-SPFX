@@ -114,6 +114,7 @@ React.useEffect(() => {
             data={data}
             options={{
               exportButton: true,
+              filtering:true,
               actionsCellStyle: {
                 backgroundColor: "none",
                 color: "#FF00dd",

@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { sp } from "@pnp/sp";
 import MaterialTable from "material-table";
 import Spinner from "../../../../Containers/Spinner";
+import swal from "sweetalert";
 
 
 const Document = () => {
@@ -96,6 +97,24 @@ const Document = () => {
     history.push("/admin/document/upload")
   }
 
+  const deleteHandler = (id) => {
+    if (window.confirm("Are you sure you want to delete")) {
+      sp.web.lists
+        .getByTitle("GiftBeneficiaries")
+        .items.getById(id)
+        .delete()
+        .then((res) => {
+          swal("Success", "deleted successfully", "success");
+          sp.web.lists
+            .getByTitle(`GiftBeneficiaries`)
+            .items.get()
+            .then((res) => {
+              setData(res);
+            });
+        });
+    }
+  };
+
   return (
     <div className="appContainer">
       <Sidebar />
@@ -146,6 +165,15 @@ const Document = () => {
 
                   onClick: (event, rowData) => {
                     history.push(`/admin/document/${rowData.ID}`);
+                  },
+                },
+                {
+                  icon: "visibility",
+                  iconProps: { style: { fontSize: "11px", color: "black" } },
+                  tooltip: "Delete",
+  
+                  onClick: (event, rowData) => {
+                    deleteHandler(rowData.ID);
                   },
                 },
               ]}

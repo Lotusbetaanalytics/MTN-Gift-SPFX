@@ -31,7 +31,8 @@ const Document = () => {
   const [employeeEmail, setEmployeeEmail] = React.useState("");
   const [ID,setID] = React.useState("")
   const [uniqueNumber,setUniqueNumber] = React.useState("")
-
+  const [pickupLocation, setPickupLocation] = React.useState("");
+  const [pickupPersonSetting, setPickupPersonSetting] = React.useState("");
   const generateSerial = () => {
     var chars = "1234567890",
       serialLength = 5,
@@ -77,6 +78,15 @@ const Document = () => {
       }
     })
     sp.web.lists
+    .getByTitle(`Notification`)
+    .items.get()
+    .then((res) => {
+      setPickupLocation(res[2].Switch);
+      setPickupPersonSetting(res[3].Switch);
+      console.log(res[3].Switch)
+    });
+
+    sp.web.lists
     .getByTitle(`Location`)
     .items.get()
     .then((res) => {
@@ -103,6 +113,7 @@ const Document = () => {
     }).then((res) => {
       setLoading(false)
         swal("Success", "Successfull", "success");
+        history.push("/home")
     }).catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
@@ -172,6 +183,7 @@ const Document = () => {
               value={Collector}
               options={collectorOption}
               size="mtn__adult"
+              disabled={pickupPersonSetting === "Off" ? true : false}
              
             />
           </div>

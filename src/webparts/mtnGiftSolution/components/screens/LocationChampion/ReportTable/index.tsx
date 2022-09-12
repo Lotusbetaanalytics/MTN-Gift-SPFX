@@ -46,7 +46,11 @@ const [columns, setColumns] = React.useState([
   { title: "Division", field: "Division", type: "string" as const },
   { title: "Vendor", field: "Vendor", type: "string" as const },
   { title: "Date", field: "Date", type: "string" as const },
-  { title: "Time", field: "Time", type: "time" as const },
+  { title: "Time", field: "Time", type: "time" as const,sortMethod: (a, b) => {
+    a = new Date(a).getTime();
+    b = new Date(b).getTime();
+       return b > a ? 1 : -1;
+    } },
  
   
  
@@ -116,6 +120,7 @@ const home = () => {
             data={data}
             options={{
               exportButton: true,
+              filtering:true,
               actionsCellStyle: {
                 backgroundColor: "none",
                 color: "#FF00dd",

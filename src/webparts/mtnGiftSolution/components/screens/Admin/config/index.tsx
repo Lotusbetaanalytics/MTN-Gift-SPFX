@@ -173,6 +173,7 @@ const Roles = ({ context }) => {
   
 
   function getPeoplePickerItems(items: any[]) {
+    console.log(items)
     const staff = items[0].secondaryText;
     setName(items[0].text);
     setEmail(items[0].secondaryText);
