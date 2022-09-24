@@ -1,21 +1,12 @@
 import * as React from "react";
-import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-  Select,
-  AdminHeader,
-  Input,
-  Navigation,
-  Helpers,
   MenuBar,
   Sidebar,
   Header,
 } from "../../../Containers";
-import MaterialTable from "material-table";
 import { sp } from "@pnp/sp";
 import swal from "sweetalert";
-import Modal from "../../../Containers/Modal";
-import Spinner from "../../../Containers/Spinner";
 import { HiHome } from "react-icons/Hi";
 const Division = () => {
   // Helpers
@@ -31,15 +22,8 @@ const Division = () => {
     | "currency";
   const string: IType = "string";
 
-  const [columns, setColumns] = React.useState([
-    { title: "Division", field: "Title", type: "string" as const },
-    { title: "Department", field: "Department", type: "string" as const },
-  ]);
-
   
-  const [open, setOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [id, setID] = React.useState(null);
+  
   const [email, setEmail] = React.useState("");
   const [smsNotification, setSmsNotification] = React.useState(false);
   const [emailNotification, setEmailNotification] = React.useState(false);
@@ -80,8 +64,8 @@ const Division = () => {
 
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
-      setEmail(response.UserProfileProperties[19].Value);
-      const userEmail = (response.UserProfileProperties[19].Value)
+      setEmail(response.Email);
+      const userEmail = (response.Email)
       sp.web.lists
       .getByTitle("Admin")
       .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
@@ -118,9 +102,7 @@ const Division = () => {
         Switch: "On",
       })
       .then((res) => {
-        setOpen(false);
         swal("Success", "SMS notication Successfully turned on ", "success");
-
         sp.web.lists
           .getByTitle(`Notification`)
           .items.get()
@@ -150,7 +132,6 @@ const Division = () => {
         Switch: "On",
       })
       .then((res) => {
-        setOpen(false);
         swal("Success", "Email notication Successfully turned on ", "success");
 
         sp.web.lists
@@ -182,9 +163,7 @@ const Division = () => {
         Switch: "On",
       })
       .then((res) => {
-        setOpen(false);
         swal("Success", "Delegate Pickup enable", "success");
-
         sp.web.lists
           .getByTitle(`Notification`)
           .items.get()
@@ -214,9 +193,7 @@ const Division = () => {
         Switch: "On",
       })
       .then((res) => {
-        setOpen(false);
         swal("Success", "Pickup location enable", "success");
-
         sp.web.lists
           .getByTitle(`Notification`)
           .items.get()
@@ -244,7 +221,6 @@ const Division = () => {
         Switch: "Off",
       })
       .then((res) => {
-        setOpen(false);
         swal("Success", "SMS notication Successfully turned off ", "success");
         sp.web.lists
           .getByTitle(`Notification`)
@@ -273,7 +249,6 @@ const Division = () => {
         Switch: "Off",
       })
       .then((res) => {
-        setOpen(false);
         swal("Success", "Email notication Successfully turned off ", "success");
         sp.web.lists
           .getByTitle(`Notification`)
@@ -303,7 +278,6 @@ const Division = () => {
         Switch: "Off",
       })
       .then((res) => {
-        setOpen(false);
         swal("Success", "Pickup location is disabled ", "success");
         sp.web.lists
           .getByTitle(`Notification`)
@@ -333,7 +307,6 @@ const Division = () => {
         Switch: "Off",
       })
       .then((res) => {
-        setOpen(false);
         swal("Success", "Pickup location is disabled ", "success");
         sp.web.lists
           .getByTitle(`Notification`)

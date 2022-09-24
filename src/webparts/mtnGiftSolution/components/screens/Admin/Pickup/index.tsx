@@ -1,11 +1,5 @@
 import * as React from "react";
-import {
-  Header,
-  Navigation,
-  Search,
-  Sidebar,
-  TextArea,
-} from "../../../Containers";
+import { Header, Navigation, Sidebar, TextArea } from "../../../Containers";
 import { useHistory } from "react-router-dom";
 import { sp } from "@pnp/sp";
 import MaterialTable from "material-table";
@@ -13,7 +7,6 @@ import swal from "sweetalert";
 import Select from "../../../Containers/Select";
 import Modal from "../../../Containers/Modal";
 import Spinner from "../../../Containers/Spinner";
-// import Spinner from "../../../../Containers/Spinner";
 
 const Pickup = () => {
   const history = useHistory();
@@ -50,12 +43,8 @@ const Pickup = () => {
   const [employeeEmail, setEmployeeEmail] = React.useState("");
   const [data, setData] = React.useState([]);
   const [query, setQuery] = React.useState("Pending");
-  const [email, setEmail] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const [edit, setEdit] = React.useState(false);
-  const [ID, setID] = React.useState(null);
-  const [reason, setReason] = React.useState("");
-  const [modal, setModal] = React.useState(false);
+  
 
   const selectOption = [
     { value: "Pending" },
@@ -80,81 +69,26 @@ const Pickup = () => {
 
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
-      setEmployeeEmail(response.UserProfileProperties[19].Value);
-      const userEmail = (response.UserProfileProperties[19].Value)
+      setEmployeeEmail(response.Email);
+      const userEmail = response.Email;
       sp.web.lists
-      .getByTitle("Admin")
-      .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
-      .get()
-      .then((response) => {
-       
-        if (response.length === 0) {
-          sweetAlert(
-            "Warning!",
-            "you are not authorize to use this portal",
-            "error"
-          );
-          history.push("/");
-        }
-    })
+        .getByTitle("Admin")
+        .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
+        .get()
+        .then((response) => {
+          if (response.length === 0) {
+            sweetAlert(
+              "Warning!",
+              "you are not authorize to use this portal",
+              "error"
+            );
+            history.push("/");
+          }
+        });
     });
   }, []);
 
-  const approveHandler = (rowData) => {
-    setID(rowData.ID);
-    sp.web.lists
-      .getByTitle("GiftBeneficiaries")
-      .items.getById(Number(rowData.ID))
-      .update({
-        ApprovalStatus: "Approved",
-        CollectionStatus: "Pending",
-      })
-      .then((res) => {
-        swal("Success", "Pick up approved successfully", "success");
-        sp.web.lists
-          .getByTitle(`GiftBeneficiaries`)
-          .items.filter(`ApprovalStatus eq '${query}'`)
-          .get()
-          .then((res) => {
-            setData(res);
-          });
-      })
-      .catch((e) => {
-        swal("Warning!", "An Error Occured, Try Again!", "error");
-        console.error(e);
-      });
-  };
-  const declineHandler = (rowData) => {
-    setID(rowData.ID);
-    setModal(true);
-  };
-
-  const reasonHandler = (e) => {
-    e.preventDefault();
-    sp.web.lists
-      .getByTitle("GiftBeneficiaries")
-      .items.getById(Number(ID))
-      .update({
-        ApprovalStatus: "Declined",
-        DeclinedReason: reason,
-      })
-      .then((res) => {
-        swal("Success", "Pick up declined successfully", "success");
-        sp.web.lists
-          .getByTitle(`GiftBeneficiaries`)
-          .items.filter(`ApprovalStatus eq '${query}'`)
-          .get()
-          .then((res) => {
-            setData(res);
-            setModal(false)
-          });
-      })
-      .catch((e) => {
-        swal("Warning!", "An Error Occured, Try Again!", "error");
-        console.error(e);
-        setModal(false);
-      });
-  };
+ 
   return (
     <div className="appContainer">
       <Sidebar />
@@ -210,31 +144,19 @@ const Pickup = () => {
                   iconProps: {
                     style: { fontSize: "11px", backgroundColor: "gold" },
                   },
-                  tooltip: "Approve",
+                  tooltip: "View",
 
                   onClick: (event, rowData) => {
-                    approveHandler(rowData);
+                    history.push(`/admin/pickup/${rowData.ID}`);
                   },
                 },
-                {
-                  icon: "visibility",
-                  iconProps: { style: { fontSize: "11px", color: "gold" } },
-                  tooltip: "Decline",
-
-                  onClick: (event, rowData) => {
-                    declineHandler(rowData);
-                  },
-                },
+               
               ]}
               components={{
                 Action: (props) => (
                   <button
                     onClick={(event) => props.action.onClick(event, props.data)}
-                    className={
-                      query === "Declined" || query === "Approved"
-                        ? "no_display"
-                        : "mtn__btn_table mtn__black"
-                    }
+                    className="mtn__btn_table mtn__black"
                   >
                     {props.action.tooltip}
                   </button>
@@ -243,31 +165,7 @@ const Pickup = () => {
             />
           )}
         </div>
-        <Modal
-          isVisible={modal}
-          title="Reason for decline?"
-          size="sm"
-          content={
-            <form onSubmit={reasonHandler}>
-              <div className="mtn__InputFlex">
-                <TextArea
-                  value={reason}
-                  onChange={(e) => setReason(e.target.value)}
-                  required={true}
-                />
-                <button
-                  style={{ marginTop: "1rem" }}
-                  type="submit"
-                  className="mtn__btn mtn__yellow"
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
-          }
-          onClose={() => setModal(false)}
-          footer=""
-        />
+       
       </div>
     </div>
   );

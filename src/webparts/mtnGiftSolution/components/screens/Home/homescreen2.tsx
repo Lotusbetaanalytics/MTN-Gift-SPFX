@@ -1,7 +1,34 @@
+import { sp } from '@pnp/sp';
 import * as React from 'react';
 import { useHistory } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
 const homescreen2 = () => {
+    const [locationchamp,setLocationchamp] = React.useState(false)
+    const [isAdmin,setIsAdmin] = React.useState(false)
+
+    React.useEffect(() => {
+        sp.profiles.myProperties.get().then((response) => {
+          sp.web.lists
+            .getByTitle("Admin")
+            .items.filter(`Role eq 'Admin' and Email eq '${response?.Email}'`)
+            .get()
+            .then((response) => {
+              if (response.length > 0) {
+                setIsAdmin(true)
+              }
+            });
+            sp.web.lists
+            .getByTitle("Admin")
+            .items.filter(`Role eq 'Location Champion' and Email eq '${response?.Email}'`)
+            .get()
+            .then((response) => {
+              if (response.length > 0) {
+                setLocationchamp(true)
+              }
+            });
+        });
+      }, []);
     const history = useHistory();
 
     const admin = () =>{
@@ -33,13 +60,13 @@ const homescreen2 = () => {
         </div>
         <div className="down">
         
-            <div className="pageCard" onClick={admin} style={{textDecoration:"none"}}>Admin</div>
+            <button className={isAdmin? "pageCard" : "no_display"} onClick={admin}>Admin</button>
        
         
-            <div className="pageCard" onClick={employee}>Employee</div>
+            <button className="pageCard" onClick={employee}>Employee</button>
         
        
-            <div className="pageCard" onClick={locationchampion}>Location</div>
+            <button className={locationchamp? "pageCard" : "no_display"} onClick={locationchampion}>Location</button>
         
 
         </div>

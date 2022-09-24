@@ -37,6 +37,9 @@ const Document = ({match}) => {
   const [modal,setModal] = React.useState(false)
   const [collectionStatus,setCollectionStatus] = React.useState("")
   const [loading,setLoading]=React.useState(false)
+  const [delegateFullname, setDelegateFullname] = React.useState("");
+  const [delegatePhone, setDelegatePhone] = React.useState("");
+  const [uniqueCode, setUniqueCode] = React.useState(false);
   const [proxyType,setProxyType] = React.useState("")
 
   const [ID,setID] = React.useState("")
@@ -66,6 +69,9 @@ const Document = ({match}) => {
                 setLocation(res[0].Location)
                 setPickupLocation(res[0].PickupLocation)
                 setPickupPerson(res[0].PickupPerson)
+                setDelegateFullname(res[0].DelegateFullname)
+                setDelegatePhone(res[0].DelegatePhone)
+                setUniqueCode(res[0].UniqueCode)
                 setDivision(res[0].Division)
                 setVendor(res[0].Vendor)
                 setID(res[0].ID)
@@ -95,6 +101,25 @@ const Document = ({match}) => {
          <Text title={"Location"} value={location} size={"medium"} />
          <Text title={"Pickup Location"} value={pickupLocation} size={"medium"} />
          <Text title={"Pickup Person"} value={pickupPerson} size={"medium"} />
+         {pickupPerson === "Delegate" ? (
+            <div>
+              <Text
+                title={"Delegate Fullname"}
+                value={delegateFullname}
+                size={"medium"}
+              />
+              <Text
+                title={"Delegate Phone number"}
+                value={delegatePhone}
+                size={"medium"}
+              />
+              <Text
+                title={"Unique Code"}
+                value={uniqueCode}
+                size={"medium"}
+              />
+            </div>
+          ) : null}
          <Text title={"Division"} value={division} size={"medium"} />
          <Text title={"Vendor"} value={vendor} size={"medium"} />
          {collectionStatus === "Collected" ? <h4 style={{marginLeft:"1%",color:"rgba(0, 0, 0)",marginTop:"10px"}}> Gift Status : <span style={{backgroundColor:"green",color:"rgba(255, 255, 255, 1)",marginLeft:"15%",padding:"5px",borderRadius:"10px",fontWeight:"200"}}>{collectionStatus}</span></h4> : <Text title={"Gift Status"} value={collectionStatus} size={"medium"} /> }

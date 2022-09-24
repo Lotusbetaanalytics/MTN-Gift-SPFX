@@ -2,8 +2,6 @@ import * as React from "react";
 import {
   Header,
   Input,
-  Navigation,
-  Search,
   Sidebar,
 } from "../../../Containers";
 import "@pnp/sp/webs";
@@ -11,21 +9,17 @@ import "@pnp/sp/site-users/web";
 import { sp } from "@pnp/sp/presets/all";
 import { useHistory } from "react-router-dom";
 import Select from "../../../Containers/Select";
-import { set } from "@microsoft/sp-lodash-subset";
 import swal from "sweetalert";
-import { sequencesToID } from "office-ui-fabric-react";
+import {
+  HttpClient,
+  HttpClientResponse,
+} from "@microsoft/sp-http";
 import Spinner from "../../../Containers/Spinner";
 
-const Document = () => {
-  const history = useHistory();
-  const Email = "johndoe@yahoo.com";
-  const [updateStatus, setUpdateStatus] = React.useState("");
 
-  const locationOption = [
-    { value: "location 1" },
-    { value: "location 2" },
-    { value: "location 2" },
-  ];
+const Document = ({context}) => {
+  const history = useHistory();
+  
   const [approvalStatus, setApprovalStatus] = React.useState("");
   const collectorOption = [{ value: "Self" }, { value: "Delegate" }];
   const [loading, setLoading] = React.useState(false);
@@ -33,15 +27,20 @@ const Document = () => {
   const [Locations, setLocations] = React.useState([]);
   const [Collector, setCollector] = React.useState("");
   const [delegateFullname, setDelegateFullname] = React.useState("");
+  const [employeeFullname, setEmployeeFullName] = React.useState("");
   const [delegatePhone, setDelegatePhone] = React.useState("");
   const [employeeEmail, setEmployeeEmail] = React.useState("");
   const [ID, setID] = React.useState("");
   const [uniqueNumber, setUniqueNumber] = React.useState("");
+  const [sms, setSMS] = React.useState("");
   const [pickupLocation, setPickupLocation] = React.useState("");
   const [pickupPersonSetting, setPickupPersonSetting] = React.useState("");
   const editHandler = () => {
     history.push("/employee/location/edit");
   };
+
+ 
+
   const generateSerial = () => {
     var chars = "1234567890",
       serialLength = 5,
@@ -59,12 +58,13 @@ const Document = () => {
     setLoading(true);
     generateSerial();
     sp.profiles.myProperties.get().then((response) => {
-      setEmployeeEmail(response.UserProfileProperties[19].Value);
-      const userEmail = response.UserProfileProperties[19].Value;
+      setEmployeeEmail(response.Email);
+      setEmployeeFullName(response.DisplayName);
+      const userEmail = response.Email;
 
       sp.web.lists
         .getByTitle(`GiftBeneficiaries`)
-        .items.filter(`UpdateStatus eq 'Approved' and Email eq '${userEmail}' `)
+        .items.filter(`UpdateStatus eq 'Approved' and CollectionStatus eq 'Pending' and Email eq '${userEmail}'`)
         .get()
         .then((res) => {
           if (res.length > 0) {
@@ -86,7 +86,7 @@ const Document = () => {
         .then((res) => {
           setPickupLocation(res[2].Switch);
           setPickupPersonSetting(res[3].Switch);
-          console.log(res[3].Switch)
+          setSMS(res[0].Switch)
         });
         
       sp.web.lists
@@ -94,20 +94,63 @@ const Document = () => {
         .items.get()
         .then((res) => {
           setLocations(res);
-          console.log(Locations)
           setLoading(false);
         });
     });
   }, []);
 
+
+ 
+ 
+
   const updateHandler = (e) => {
     setLoading(true);
-    if (Collector === "Self") {
-      setDelegateFullname("");
-      setDelegatePhone("");
-    }
     e.preventDefault();
-    sp.web.lists
+      if (Collector === "Delegate" && sms === "On" && delegatePhone.length > 0) {
+        sp.web.lists
+      .getByTitle(`GiftBeneficiaries`)
+      .items.getById(Number(ID))
+      .update({
+        ApprovalStatus: "Pending",
+        UniqueCode: uniqueNumber,
+        PickupLocation: Location,
+        PickupPerson: Collector,
+        DelegateFullname: delegateFullname,
+        DelegatePhone: delegatePhone,
+      })
+      .then((res) => {
+        const postURL = "https://mtnsms.herokuapp.com/api/v1/sms";
+        const httpClientOptions = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer iCode`,
+      },
+      body: JSON.stringify({
+        id: `3310232323${ID}`,
+        message: `Yello ${delegateFullname}, you have been selected as a delegate by ${employeeFullname} to pick up an item,this is your unique code ${uniqueNumber}`,
+        mobile: [`234${delegatePhone.slice(1)}`],
+        sender: "MTN",
+      }),
+      method: "POST",
+    }
+        setLoading(false);
+        swal("Success", "Successfull", "success");
+        history.push("/home")
+        context.httpClient
+        .post(postURL, HttpClient.configurations.v1, httpClientOptions)
+        .then((response: Response): Promise<HttpClientResponse> => {
+          swal("Success", "Success", "success");
+         
+          return response.json();
+        })
+        
+      })
+      .catch((e) => {
+        swal("Warning!", "An Error Occured, Try Again!", "error");
+        console.error(e);
+      });
+    }else if (Collector === "Delegate" && sms === "Off" && delegatePhone.length > 0) {
+      sp.web.lists
       .getByTitle(`GiftBeneficiaries`)
       .items.getById(Number(ID))
       .update({
@@ -120,27 +163,41 @@ const Document = () => {
       })
       .then((res) => {
         setLoading(false);
-        swal("Success", "Successfull", "success");
-        history.push("/home")
-        sp.web.lists
-          .getByTitle(`GiftBeneficiaries`)
-          .items.filter(`Email eq '${Email}' `)
-          .get()
-          .then((res) => {
-            setApprovalStatus(res[0].ApprovalStatus);
-           
-          });
+        swal("Success", "Success", "success");
+
       })
       .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
       });
+    } else {
+      setDelegateFullname("");
+      setDelegatePhone("");
+      sp.web.lists
+      .getByTitle(`GiftBeneficiaries`)
+      .items.getById(Number(ID))
+      .update({
+        ApprovalStatus: "Pending",
+        PickupLocation: Location,
+        PickupPerson: "Self",
+      })
+      .then((res) => {
+        setLoading(false);
+        swal("Success", "Success", "success");
+
+      })
+      .catch((e) => {
+        swal("Warning!", "An Error Occured, Try Again!", "error");
+        console.error(e);
+      });
+    }
   };
+
   const homeHandler = () => {
     history.push("/home");
   };
 
-  return (
+  return ( 
     <div className="appContainer">
       <Sidebar />
 
@@ -183,7 +240,6 @@ const Document = () => {
                 }
                 className="mtn__btn mtn__black"
               >
-                {" "}
                 Edit
               </button>
             </div>
@@ -201,6 +257,11 @@ const Document = () => {
                 filter={true}
                 size="mtn__adult"
                 readOnly={approvalStatus === null ? false : true}
+                disabled={
+                  pickupLocation === "Off"
+                    ? true
+                    : false
+                }
               />
             </div>
             <p>Collector</p>
@@ -213,7 +274,6 @@ const Document = () => {
                 value={Collector}
                 options={collectorOption}
                 size="mtn__adult"
-                readOnly={approvalStatus === null ? false: false}
                 disabled={pickupPersonSetting === "Off" ? true : false}
               />
             </div>
@@ -267,18 +327,14 @@ const Document = () => {
               }}
             >
               <button
+                className="mtn__btn mtn__yellow"
+                onClick={updateHandler}
                 disabled={
-                  approvalStatus === "Approved" ||
-                  approvalStatus === "Pending" ||
-                  approvalStatus === "Declined" ||
-                  pickupLocation === "Off"
+                  approvalStatus === "Pending" || approvalStatus === "Declined"
                     ? true
                     : false
                 }
-                className="mtn__btn mtn__yellow"
-                onClick={updateHandler}
               >
-                {" "}
                 Submit
               </button>
             </div>

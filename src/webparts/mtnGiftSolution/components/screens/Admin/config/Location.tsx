@@ -2,11 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-  Select,
-  AdminHeader,
   Input,
-  Navigation,
-  Helpers,
   MenuBar,
   Sidebar,
   Header,
@@ -55,8 +51,8 @@ const Location = () => {
 
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
-      setEmail(response.UserProfileProperties[19].Value);
-      const userEmail = (response.UserProfileProperties[19].Value)
+      setEmail(response.Email);
+      const userEmail = (response.Email)
       sp.web.lists
       .getByTitle("Admin")
       .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)

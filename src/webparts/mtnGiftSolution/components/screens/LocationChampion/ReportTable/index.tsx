@@ -70,8 +70,8 @@ const homeHandler =() =>{
 React.useEffect(() => {
   setLoading(true)
     sp.profiles.myProperties.get().then((response) => {
-      setEmployeeEmail(response.UserProfileProperties[19].Value);
-      const userEmail = response.UserProfileProperties[19].Value;
+      setEmployeeEmail(response.Email);
+      const userEmail = response.Email;
 
       sp.web.lists
         .getByTitle("Admin")

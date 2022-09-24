@@ -47,6 +47,7 @@ const Document = () => {
     { title: "Pickup Person", field: "PickupPerson", type: "string" as const },
     { title: "Division", field: "Division", type: "string" as const },
     { title: "Vendor", field: "Vendor", type: "string" as const },
+    { title: "Upadate Staus", field: "UpdateStatus", type: "string" as const },
   ]);
 
   const [employeeEmail, setEmployeeEmail] = React.useState("");
@@ -65,7 +66,6 @@ const Document = () => {
       .getByTitle(`GiftBeneficiaries`)
       .items.get()
       .then((res) => {
-        console.log(res);
         setData(res);
         setLoading(false);
       });
@@ -73,8 +73,8 @@ const Document = () => {
 
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
-      setEmployeeEmail(response.UserProfileProperties[19].Value);
-      const userEmail = (response.UserProfileProperties[19].Value)
+      setEmployeeEmail(response.Email);
+      const userEmail = (response.Email)
       sp.web.lists
       .getByTitle("Admin")
       .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
@@ -121,7 +121,7 @@ const Document = () => {
       <div className="contentsRight">
         <Header title={"Document"} userEmail={employeeEmail} />
         <div className="spaceBetween">
-          <div> <button className="mtn__btn mtn__white" onClick={homeHandler}>
+          <div> <button className="mtn__btn mtn__yellow" onClick={homeHandler}>
               Add Employee
             </button></div>
           <Navigation document="active" />

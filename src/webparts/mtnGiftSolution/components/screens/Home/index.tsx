@@ -18,7 +18,7 @@ const Home = () => {
                 </div>
             </div>
             <div className="btnContainer">
-                <Link to={`/home`} className="mtn__btn mtn__black">Proceed</Link>
+                <Link to={`/home`} className="mtn__btns mtn__black">Proceed</Link>
             </div>
         </div>
         </div>

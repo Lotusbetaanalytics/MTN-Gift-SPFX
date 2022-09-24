@@ -19,7 +19,6 @@ import { Spinner } from "office-ui-fabric-react";
 
 const Document = () => {
   const [query, setQuery] = React.useState(false);
-  const collectorOption = [{ value: "Self" }, { value: "Delegate" }];
   const proxyOption = [{ value: "By the Portal" }, { value: "By Email" }];
   const history = useHistory();
 
@@ -48,8 +47,8 @@ const Document = () => {
 
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
-      setEmployeeEmail(response.UserProfileProperties[19].Value);
-      const userEmail = response.UserProfileProperties[19].Value;
+      setEmployeeEmail(response.Email);
+      const userEmail = response.Email;
 
       sp.web.lists
         .getByTitle("Admin")
@@ -187,6 +186,9 @@ const Document = () => {
         Location: location,
         PickupLocation: pickupLocation,
         PickupPerson: pickupPerson,
+        DelegateFullname: delegateFullname,
+        DelegatePhone: delegatePhone,
+        UniqueCode: uniqueCode,
         Division: division,
         Vendor: vendor,
         CollectionStatus: "Collected",
@@ -197,13 +199,7 @@ const Document = () => {
         setLoading(false);
         setModal(false);
         swal("Success", "Confirmation successfully", "success");
-        sp.web.lists
-          .getByTitle(`GiftBeneficiaries`)
-          .items.filter(`ApprovalStatus eq 'Approved' and Phone eq '${phone}'`)
-          .get()
-          .then((res) => {
-            setCollectionStatus(res[0].CollectionStatus);
-          });
+        history.push("/locationchampion/report")
       })
       .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
@@ -237,12 +233,13 @@ const Document = () => {
             />
           </div>
           <div style={{display:"flex",flexDirection:"row"}}>
-          <button className="mtn__btn mtn__yellow" onClick={homeHandler} style={{marginRight:"10px"}}>
-              Logout
-            </button>
-            <button className="mtn__btn mtn__white" onClick={backHandler}>
+          <button className="mtn__btn mtn__white" onClick={backHandler} style={{marginRight:"10px"}}>
               Report
             </button>
+          <button className="mtn__btn mtn__yellow" onClick={homeHandler} >
+              Logout
+            </button>
+            
           </div>
         </div>
         <div className={styles.header}>

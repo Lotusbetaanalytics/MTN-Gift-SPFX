@@ -5,7 +5,7 @@ import { Route, Switch, HashRouter } from "react-router-dom";
 import * as jQuery from "jquery";
 import "./global.scss";
 import "./assets/icon.scss";
-import { Home, Homepage } from "./screens";
+import { ErrorPage, Home, Homepage, ViewPickup } from "./screens";
 import {
   AdminViewDocument,
   AdminViewReport,
@@ -23,6 +23,11 @@ import {
   Roles,
   UploadDocument,
 } from "./screens";
+import {
+  SPHttpClient,
+  SPHttpClientConfiguration,
+  SPHttpClientResponse,
+} from "@microsoft/sp-http";
 
 export default class MtnGiftSolution extends React.Component<
   IMtnGiftSolutionProps,
@@ -33,7 +38,8 @@ export default class MtnGiftSolution extends React.Component<
     jQuery(".SPCanvas-canvas").prop("style", "max-width: none");
     jQuery(".CanvasZone").prop("style", "max-width: none");
     return (
-      <>
+      
+       <>
         <HashRouter>
           <Switch>
             <Route path="/" exact component={Home} />
@@ -50,6 +56,7 @@ export default class MtnGiftSolution extends React.Component<
               component={AdminViewDocument}
             />
             <Route path="/admin/pickup" exact component={Pickup} />
+            <Route path="/admin/pickup/:id" exact component={ViewPickup} />
             <Route path="/admin/report" exact component={Report} />
             <Route path="/admin/report/:id" exact component={AdminViewReport} />
             <Route
@@ -75,16 +82,18 @@ export default class MtnGiftSolution extends React.Component<
             <Route
               path="/employee/location"
               exact
-              component={EmployeePickLocation}
-            />
+              render={(props) => <EmployeePickLocation context={this.props.context}/>}/>
             <Route
               path="/employee/location/edit"
               exact
-              component={EmployeePickLocationEdit}
+              render={(props) => <EmployeePickLocationEdit context={this.props.context}/>}
             />
+             <Route component={ErrorPage} />
           </Switch>
         </HashRouter>
-      </>
+        </>
+    
     );
   }
 }
+

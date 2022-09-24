@@ -4,22 +4,17 @@ import styles from "./styles.module.scss";
 import { sp } from "@pnp/sp";
 import * as XLSX from 'xlsx';
 import swal from "sweetalert";
-import { readFile, utils } from 'xlsx';
-// const XLSX = require("xlsx");
+
 
 
 const Document = ({history}) => {
   const [employeeEmail, setEmployeeEmail] = React.useState("");
-  const [uploadFile,setUploadedFile] = React.useState("")
-  const [upload,setUpload] = React.useState(false)
   const [loading,setLoading]= React.useState(false)
-  const [data,setData] = React.useState([])
-
+  
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
-      console.log(response);
       setEmployeeEmail(response.Email);
-      const userEmail = (response.UserProfileProperties[19].Value)
+      const userEmail = (response.Email)
       sp.web.lists
       .getByTitle("Admin")
       .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
@@ -38,79 +33,6 @@ const Document = ({history}) => {
     });
   }, []);
  
-  const fileUpload = (e) => {
-  //   e.preventDefault();
-  //   console.log("yess")
-  //   setLoading(true);
-   let files = e.target.files
-  //     f = files[0];
-  //   var allowedExtensions =
-  //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-  //     "application/vnd.ms-excel" ||
-  //     ".csv";
-  //   if (f.type !== allowedExtensions) {
-  //     swal("Warning!", "Invalid File", "warning");
-  //   } else {
-     
-  //         setLoading(false);
-  //       }
-  //      var reader = new FileReader();
-  //     reader.onload = function (e) {
-  //       setLoading(true);
-  //       var data = reader.result;
-  //       let readedData = XLSX.read(data, { type: "binary" });
-  //       const wsname = readedData.SheetNames[0];
-  //       const ws = readedData.Sheets[wsname] ;
-  //       /* Convert array to json*/
-  //       const dataParse = XLSX.utils.sheet_to_json(ws);
-  //       if (dataParse.length === 0) {
-  //         setLoading(false);
-  //         swal("Warning!", "Document is empty", "warning");
-  //       } else {
-  //         console.log(dataParse)
-  //         setData(dataParse);
-  //         console.log(data)
-  //         setUpload(true);
-
-  //    reader.readAsBinaryString(f);
-  //   }
-  //     }
-  const reader = new FileReader();
-    const rABS = !!reader.readAsBinaryString;
-    console.log(rABS)
-    reader.onload = e => {
-      /* Parse data */
-      console.log(e.target.result,"result")
-      const bstr = e.target.result;
-      const wb = XLSX.read(bstr, { type: rABS ? "binary" : "array" });
-      /* Get first worksheet */
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      console.log(rABS, wb);
-      /* Convert array of arrays */
-      const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      /* Update state */
-      setData(data);
-      console.log(data)
-    };
-   
-}
-// const readUploadFile = (e) => {
-//   e.preventDefault();
-//   if (e.target.files) {
-//       const reader = new FileReader();
-//       reader.onload = (e) => {
-//           const data = e.target.result;
-//           const workbook = XLSX.read(data, { type: "array" });
-//           const sheetName = workbook.SheetNames[0];
-//           const worksheet = workbook.Sheets[sheetName];
-//           const json = XLSX.utils.sheet_to_json(worksheet);
-//           console.log(json);
-//       };
-//       reader.readAsArrayBuffer(e.target.files[0]);
-//   }
-// }
-  
 
 const readUploadFile = (e) => {
     e.preventDefault;
@@ -161,16 +83,13 @@ const readUploadFile = (e) => {
                 });
             } else {
               setLoading(false);
-              console.log("uessss")
               swal("Warning!", "Some Fields are required!", "warning");
             }
           }
       };
       reader.readAsArrayBuffer(e.target.files[0]);
       
-    } else {
-      console.log("i dont understand")
-    }
+    } 
    
 }
 
@@ -223,17 +142,13 @@ const singleUploadFile = (e) => {
               });
           } else {
             setLoading(false);
-            console.log("uessss")
             swal("Warning!", "Some Fields are required!", "warning");
           }
         }
     };
     reader.readAsArrayBuffer(e.target.files[0]);
     
-  } else {
-    console.log("i dont understand")
   }
- 
 }
   return (
     <div className="appContainer">

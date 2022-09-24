@@ -3,15 +3,8 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { HiHome } from "react-icons/Hi";
 
-import {
-  Select,
-  MenuBar,
-  Sidebar,
-  Header,
-} from "../../../Containers";
-import {
-  SPHttpClient,
-} from "@microsoft/sp-http";
+import { Select, MenuBar, Sidebar, Header } from "../../../Containers";
+import { SPHttpClient } from "@microsoft/sp-http";
 import MaterialTable from "material-table";
 import { sp } from "@pnp/sp";
 import swal from "sweetalert";
@@ -67,25 +60,24 @@ const Roles = ({ context }) => {
         setRoles(res);
       });
   }, []);
+
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
-      setEmployeeEmail(response.UserProfileProperties[19].Value);
-      const userEmail = (response.UserProfileProperties[19].Value)
+      setEmployeeEmail(response?.Email);
       sp.web.lists
-      .getByTitle("Admin")
-      .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
-      .get()
-      .then((response) => {
-       
-        if (response.length === 0) {
-          sweetAlert(
-            "Warning!",
-            "you are not authorize to use this portal",
-            "error"
-          );
-          history.push("/");
-        }
-    })
+        .getByTitle("Admin")
+        .items.filter(`Role eq 'Admin' and Email eq '${response?.Email}'`)
+        .get()
+        .then((response) => {
+          if (response.length === 0) {
+            sweetAlert(
+              "Warning!",
+              "you are not authorize to use this portal",
+              "error"
+            );
+            history.push("/");
+          }
+        });
     });
   }, []);
 
@@ -99,6 +91,7 @@ const Roles = ({ context }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    setLoading(true)
     sp.web.lists
       .getByTitle("Admin")
       .items.add({
@@ -107,14 +100,9 @@ const Roles = ({ context }) => {
         Role: role,
       })
       .then((res) => {
+        setLoading(false)
         setOpen(false);
         swal("Success", "Admin added Successfully", "success");
-        sp.web.lists
-          .getByTitle(`Admin`)
-          .items.get()
-          .then((res) => {
-            setData(res);
-          });
       })
       .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
@@ -124,6 +112,7 @@ const Roles = ({ context }) => {
 
   const editHandler = (e) => {
     e.preventDefault();
+    setLoading(true)
     sp.web.lists
       .getByTitle("Admin")
       .items.getById(id)
@@ -133,13 +122,16 @@ const Roles = ({ context }) => {
         Role: role,
       })
       .then((res) => {
+        setLoading(false)
         setOpen(false);
         swal("Success", "Admin Edited Successfully", "success");
+        //check two request
         sp.web.lists
           .getByTitle(`Admin`)
           .items.get()
           .then((res) => {
             setData(res);
+            // check if 
           });
       })
       .catch((e) => {
@@ -170,10 +162,8 @@ const Roles = ({ context }) => {
     console.log("yes");
   };
 
-  
-
   function getPeoplePickerItems(items: any[]) {
-    console.log(items)
+    console.log(items);
     const staff = items[0].secondaryText;
     setName(items[0].text);
     setEmail(items[0].secondaryText);
