@@ -85,7 +85,9 @@ const Pickup = () => {
             history.push("/");
           }
         });
+        
     });
+   
   }, []);
 
  

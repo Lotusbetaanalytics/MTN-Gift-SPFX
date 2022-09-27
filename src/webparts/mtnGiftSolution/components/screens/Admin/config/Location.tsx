@@ -81,6 +81,20 @@ const Location = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    setLoading(true)
+    if (Location.length < 1) {
+      swal("Warning!", "Invalid Location", "error");
+      setLoading(false)
+    } else {
+      sp.web.lists
+    .getByTitle("Location")
+    .items.filter(`Title eq '${Location}' `)
+    .get()
+    .then((response) => {
+      if (response.length > 0) {
+        swal("Warning!", "Location already exist", "error");
+        setLoading(false)
+      } else  
     sp.web.lists
       .getByTitle("Location")
       .items.add({
@@ -100,6 +114,8 @@ const Location = () => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
       });
+    })
+  }
   };
 
   const editHandler = (e) => {

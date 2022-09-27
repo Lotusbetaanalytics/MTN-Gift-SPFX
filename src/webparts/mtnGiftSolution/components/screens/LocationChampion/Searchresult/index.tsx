@@ -174,7 +174,7 @@ const Document = () => {
         LocationChampionEmail: employeeEmail,
         CollectedBy: pickupPerson,
         ProxyType: proxyType,
-      })
+      }).then((res) => {
     sp.web.lists
       .getByTitle("Report")
       .items.add({
@@ -205,7 +205,7 @@ const Document = () => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
       })
-  
+    })
   };
   const handler = (e) => {
     e.preventDefault();

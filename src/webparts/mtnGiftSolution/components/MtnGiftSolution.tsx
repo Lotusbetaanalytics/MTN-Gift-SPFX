@@ -56,7 +56,7 @@ export default class MtnGiftSolution extends React.Component<
               component={AdminViewDocument}
             />
             <Route path="/admin/pickup" exact component={Pickup} />
-            <Route path="/admin/pickup/:id" exact component={ViewPickup} />
+            <Route path="/admin/pickup/:id" exact render={(props) => <ViewPickup context={this.props.context}/>}  />
             <Route path="/admin/report" exact component={Report} />
             <Route path="/admin/report/:id" exact component={AdminViewReport} />
             <Route
@@ -82,11 +82,12 @@ export default class MtnGiftSolution extends React.Component<
             <Route
               path="/employee/location"
               exact
-              render={(props) => <EmployeePickLocation context={this.props.context}/>}/>
+              component={EmployeePickLocation}
+              />
             <Route
               path="/employee/location/edit"
               exact
-              render={(props) => <EmployeePickLocationEdit context={this.props.context}/>}
+              component={EmployeePickLocationEdit}
             />
              <Route component={ErrorPage} />
           </Switch>

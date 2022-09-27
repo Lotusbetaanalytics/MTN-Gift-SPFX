@@ -81,12 +81,27 @@ const Role = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    setLoading(true)
+    if (Title.length < 1) {
+      swal("Warning!", "Invalid Role", "error");
+      setLoading(false)
+    } else {
+      sp.web.lists
+      .getByTitle("Role")
+      .items.filter(`Title eq '${Title}' `)
+      .get()
+      .then((response) => {
+        if (response.length > 0) {
+          swal("Warning!", "Role already exist", "error");
+          setLoading(false)
+        } else  
     sp.web.lists
       .getByTitle("Role")
       .items.add({
         Title: Title,
       })
       .then((res) => {
+        setLoading(false)
         setOpen(false);
         swal("Success", "Role added Successfully", "success");
         sp.web.lists
@@ -99,7 +114,9 @@ const Role = () => {
       .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
-      });
+      })
+    })
+  }
   };
 
   const editHandler = (e) => {

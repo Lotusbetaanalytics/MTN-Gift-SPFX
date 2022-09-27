@@ -240,8 +240,25 @@
      
     
     }
+
     .gray{
       background-color: gray;
+    }
+    .gray_mtn{
+      height: 3.5rem;
+      outline: none;
+      width:150px ;
+      padding: 1rem 3rem;
+      border-radius: 24px;
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+      color: gray;
+      background-color: #FAFAFA;
+      border: 1px dotted rgb(155, 152, 152);
+      outline: none;
+      align-items: center;
     }
     .yellow{
       background-color: #ffcc00;

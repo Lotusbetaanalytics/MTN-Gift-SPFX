@@ -17,7 +17,7 @@ import {
 import Spinner from "../../../Containers/Spinner";
 
 
-const Document = ({context}) => {
+const Document = () => {
   const history = useHistory();
   
   const [approvalStatus, setApprovalStatus] = React.useState("");
@@ -103,53 +103,106 @@ const Document = ({context}) => {
  
  
 
+  // const updateHandler = (e) => {
+  //   setLoading(true);
+  //   e.preventDefault();
+  //     if (Collector === "Delegate" && sms === "On" && delegatePhone.length > 0) {
+  //       sp.web.lists
+  //     .getByTitle(`GiftBeneficiaries`)
+  //     .items.getById(Number(ID))
+  //     .update({
+  //       ApprovalStatus: "Pending",
+  //       UniqueCode: uniqueNumber,
+  //       PickupLocation: Location,
+  //       PickupPerson: Collector,
+  //       DelegateFullname: delegateFullname,
+  //       DelegatePhone: delegatePhone,
+  //     })
+  //     .then((res) => {
+  //       const postURL = "https://mtnsms.herokuapp.com/api/v1/sms";
+  //       const httpClientOptions = {
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer iCode`,
+  //     },
+  //     body: JSON.stringify({
+  //       id: `3310232323${ID}`,
+  //       message: `Yello ${delegateFullname}, you have been selected as a delegate by ${employeeFullname} to pick up an item,this is your unique code ${uniqueNumber}`,
+  //       mobile: [`234${delegatePhone.slice(1)}`],
+  //       sender: "MTN",
+  //     }),
+  //     method: "POST",
+  //   }
+  //       setLoading(false);
+  //       swal("Success", "Successfull", "success");
+  //       history.push("/home")
+  //       context.httpClient
+  //       .post(postURL, HttpClient.configurations.v1, httpClientOptions)
+  //       .then((response: Response): Promise<HttpClientResponse> => {
+  //         swal("Success", "Success", "success");
+         
+  //         return response.json();
+  //       })
+        
+  //     })
+  //     .catch((e) => {
+  //       swal("Warning!", "An Error Occured, Try Again!", "error");
+  //       console.error(e);
+  //     });
+  //   }else if (Collector === "Delegate" && sms === "Off" && delegatePhone.length > 0) {
+  //     sp.web.lists
+  //     .getByTitle(`GiftBeneficiaries`)
+  //     .items.getById(Number(ID))
+  //     .update({
+  //       ApprovalStatus: "Pending",
+  //       UniqueCode: uniqueNumber,
+  //       PickupLocation: Location,
+  //       PickupPerson: Collector,
+  //       DelegateFullname: delegateFullname,
+  //       DelegatePhone: delegatePhone,
+  //     })
+  //     .then((res) => {
+  //       setLoading(false);
+  //       swal("Success", "Success", "success");
+
+  //     })
+  //     .catch((e) => {
+  //       swal("Warning!", "An Error Occured, Try Again!", "error");
+  //       console.error(e);
+  //     });
+  //   } else {
+  //     setDelegateFullname("");
+  //     setDelegatePhone("");
+  //     sp.web.lists
+  //     .getByTitle(`GiftBeneficiaries`)
+  //     .items.getById(Number(ID))
+  //     .update({
+  //       ApprovalStatus: "Pending",
+  //       PickupLocation: Location,
+  //       PickupPerson: "Self",
+  //     })
+  //     .then((res) => {
+  //       setLoading(false);
+  //       swal("Success", "Success", "success");
+
+  //     })
+  //     .catch((e) => {
+  //       swal("Warning!", "An Error Occured, Try Again!", "error");
+  //       console.error(e);
+  //     });
+  //   }
+  // };
+
   const updateHandler = (e) => {
     setLoading(true);
     e.preventDefault();
-      if (Collector === "Delegate" && sms === "On" && delegatePhone.length > 0) {
-        sp.web.lists
-      .getByTitle(`GiftBeneficiaries`)
-      .items.getById(Number(ID))
-      .update({
-        ApprovalStatus: "Pending",
-        UniqueCode: uniqueNumber,
-        PickupLocation: Location,
-        PickupPerson: Collector,
-        DelegateFullname: delegateFullname,
-        DelegatePhone: delegatePhone,
-      })
-      .then((res) => {
-        const postURL = "https://mtnsms.herokuapp.com/api/v1/sms";
-        const httpClientOptions = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer iCode`,
-      },
-      body: JSON.stringify({
-        id: `3310232323${ID}`,
-        message: `Yello ${delegateFullname}, you have been selected as a delegate by ${employeeFullname} to pick up an item,this is your unique code ${uniqueNumber}`,
-        mobile: [`234${delegatePhone.slice(1)}`],
-        sender: "MTN",
-      }),
-      method: "POST",
-    }
-        setLoading(false);
-        swal("Success", "Successfull", "success");
-        history.push("/home")
-        context.httpClient
-        .post(postURL, HttpClient.configurations.v1, httpClientOptions)
-        .then((response: Response): Promise<HttpClientResponse> => {
-          swal("Success", "Success", "success");
-         
-          return response.json();
-        })
-        
-      })
-      .catch((e) => {
-        swal("Warning!", "An Error Occured, Try Again!", "error");
-        console.error(e);
-      });
-    }else if (Collector === "Delegate" && sms === "Off" && delegatePhone.length > 0) {
+      if (Collector === "Delegate" && delegatePhone.length < 11) {
+        swal("Warning!", "Delegate phone number not complete", "error");
+      setLoading(false)
+    }else if (Collector === "Delegate" && delegatePhone.length > 11) {
+      swal("Warning!", "Delegate phone number is invalid", "error");
+      setLoading(false)
+  } else if (Collector === "Delegate" && delegatePhone.length === 11) {
       sp.web.lists
       .getByTitle(`GiftBeneficiaries`)
       .items.getById(Number(ID))
@@ -164,7 +217,10 @@ const Document = ({context}) => {
       .then((res) => {
         setLoading(false);
         swal("Success", "Success", "success");
-
+        sp.web.lists.getByTitle(`GiftBeneficiaries`).items.filter(`ID eq '${ID}'`).get().then
+        ((res) => {
+          setApprovalStatus(res[0].ApprovalStatus)
+        })
       })
       .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
@@ -184,7 +240,10 @@ const Document = ({context}) => {
       .then((res) => {
         setLoading(false);
         swal("Success", "Success", "success");
-
+        sp.web.lists.getByTitle(`GiftBeneficiaries`).items.filter(`ID eq '${ID}'`).get().then
+        ((res) => {
+          setApprovalStatus(res[0].ApprovalStatus)
+        })
       })
       .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
@@ -192,6 +251,8 @@ const Document = ({context}) => {
       });
     }
   };
+
+  console.log(approvalStatus)
 
   const homeHandler = () => {
     history.push("/home");
@@ -330,7 +391,7 @@ const Document = ({context}) => {
                 className="mtn__btn mtn__yellow"
                 onClick={updateHandler}
                 disabled={
-                  approvalStatus === "Pending" || approvalStatus === "Declined"
+                  approvalStatus === "Pending" || approvalStatus === "Approved" || approvalStatus === "Declined"
                     ? true
                     : false
                 }

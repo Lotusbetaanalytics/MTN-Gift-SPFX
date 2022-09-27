@@ -92,6 +92,19 @@ const Roles = ({ context }) => {
   const submitHandler = (e) => {
     e.preventDefault();
     setLoading(true)
+    if ( role.length < 1 || email.length < 1) {
+      swal("Warning!", "All fields required", "error");
+      setLoading(false)
+    } else {
+    sp.web.lists
+    .getByTitle("Admin")
+    .items.filter(`Role eq '${role}' and Email eq '${email}'`)
+    .get()
+    .then((response) => {
+      if (response.length > 0) {
+        swal("Warning!", "User already exist", "error");
+        setLoading(false)
+      } else
     sp.web.lists
       .getByTitle("Admin")
       .items.add({
@@ -108,6 +121,8 @@ const Roles = ({ context }) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
       });
+    })
+  }
   };
 
   const editHandler = (e) => {
@@ -281,7 +296,7 @@ const Roles = ({ context }) => {
             loading ? (
               <Spinner />
             ) : (
-              <div className="mtn__InputFlex">
+              <form className="mtn__InputFlex">
                 <div className={`mtn__InputContainer mtn__adult`}>
                   <PeoplePicker
                     context={context}
@@ -313,6 +328,7 @@ const Roles = ({ context }) => {
                     options={roles}
                     filter={true}
                     filterOption="Title"
+                    readOnly={true}
                   />
                 </div>
 
@@ -325,13 +341,13 @@ const Roles = ({ context }) => {
                 >
                   <button
                     onClick={edit ? editHandler : submitHandler}
-                    type="button"
+                    type="submit"
                     className="mtn__btn mtn__yellow"
                   >
                     {edit ? "Edit Admin" : "Add Admin"}
                   </button>
                 </div>
-              </div>
+              </form>
             )
           }
           onClose={() => setOpen(false)}

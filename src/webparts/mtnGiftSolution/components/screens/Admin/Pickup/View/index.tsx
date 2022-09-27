@@ -3,17 +3,21 @@ import {  Header, Input, Navigation, Search, Select, Sidebar, TextArea } from ".
 import styles from "./styles.module.scss";
 import { sp } from "@pnp/sp";
 import Text from "../../../../Containers/Text";
-import { useHistory } from "react-router-dom";
+import { useHistory,useParams } from "react-router-dom";
 import swal from "sweetalert";
 import Spinner from "../../../../Containers/Spinner";
 import Modal from "../../../../Containers/Modal";
+import {
+  HttpClient,
+  HttpClientResponse,
+} from "@microsoft/sp-http";
 
 
 
-
-const Document = ({match}) => {
+const Document = ({context}) => {
+  let match = useParams()
+  match = match.id
   const history = useHistory()
-
   const [employeeEmail, setEmployeeEmail] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [surname, setSurname] = React.useState("");
@@ -31,14 +35,35 @@ const Document = ({match}) => {
   const [modal,setModal] = React.useState(false)
   const [ID, setID] = React.useState(null);
   const [reason, setReason] = React.useState("");
-  const itemID = match.params.id
+  const itemID = match
   const [delegateFullname, setDelegateFullname] = React.useState("");
   const [delegatePhone, setDelegatePhone] = React.useState("");
   const [uniqueCode, setUniqueCode] = React.useState(false);
+  const [sms, setSMS] = React.useState("");
+  const [uniqueNumber, setUniqueNumber] = React.useState("");
 
   React.useEffect(() => {
     setLoading(true)
-  
+    const generateSerial = () => {
+      var chars = "1234567890",
+        serialLength = 5,
+        randomSerial = "",
+        i,
+        randomNumber;
+      for (i = 0; i < serialLength; i = i + 1) {
+        randomNumber = Math.floor(Math.random() * chars.length);
+        randomSerial += chars.substring(randomNumber, randomNumber + 1);
+        setUniqueNumber(randomSerial);
+      }
+    };
+
+    sp.web.lists
+    .getByTitle(`Notification`)
+    .items.get()
+    .then((res) => {
+      setSMS(res[0].Switch)
+    });
+
       sp.profiles.myProperties.get().then((response) => {
         setEmployeeEmail(response.Email);
         const userEmail = (response.Email)
@@ -90,26 +115,102 @@ const Document = ({match}) => {
      history.push("/admin/document")
   }
 
-  const approveHandler = () => {
-    sp.web.lists
-      .getByTitle("GiftBeneficiaries")
+  // const approveHandler = () => {
+  //   sp.web.lists
+  //     .getByTitle("GiftBeneficiaries")
+  //     .items.getById(Number(itemID))
+  //     .update({
+  //       ApprovalStatus: "Approved",
+  //     })
+  //     .then((res) => {
+  //       swal("Success", "Pick up approved successfully", "success");
+  //       sp.web.lists
+  //         .getByTitle(`GiftBeneficiaries`)
+  //         .items.filter(`ID eq '${itemID}'`).get()
+  //         .then((res) => {
+  //           setApprovalStatus(res[0].ApprovalStatus)
+  //         });
+  //     })
+  //     .catch((e) => {
+  //       swal("Warning!", "An Error Occured, Try Again!", "error");
+  //       console.error(e);
+  //     });
+  // };
+  const updateHandler = (e) => {
+    setLoading(true);
+    e.preventDefault();
+      if (pickupPerson === "Delegate" && sms === "On" && delegatePhone.length > 0) {
+        sp.web.lists
+      .getByTitle(`GiftBeneficiaries`)
       .items.getById(Number(itemID))
       .update({
         ApprovalStatus: "Approved",
       })
       .then((res) => {
-        swal("Success", "Pick up approved successfully", "success");
-        sp.web.lists
-          .getByTitle(`GiftBeneficiaries`)
-          .items.filter(`ID eq '${itemID}'`).get()
-          .then((res) => {
-            setApprovalStatus(res[0].ApprovalStatus)
-          });
+        const postURL = "https://mtnsms.herokuapp.com/api/v1/sms";
+        const httpClientOptions = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer iCode`,
+      },
+      body: JSON.stringify({
+        id: `3310232323${itemID}`,
+        message: `Yello ${delegateFullname}, you have been selected as a delegate by ${surname} ${FirstName} to pick up an item,this is your unique code ${uniqueCode}`,
+        mobile: [`234${delegatePhone.slice(1)}`],
+        sender: "MTN",
+      }),
+      method: "POST",
+    }
+        setLoading(false);
+        swal("Success", "Success", "success");
+        history.push("/home")
+        context.httpClient
+        .post(postURL, HttpClient.configurations.v1, httpClientOptions)
+        .then((response: Response): Promise<HttpClientResponse> => {
+          swal("Success", "Success", "success");
+         
+          return response.json();
+        })
+        
       })
       .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
       });
+    }else if (pickupPerson === "Delegate" && sms === "Off" && delegatePhone.length > 0) {
+      sp.web.lists
+      .getByTitle(`GiftBeneficiaries`)
+      .items.getById(Number(itemID))
+      .update({
+        ApprovalStatus: "Approved",
+      })
+      .then((res) => {
+        setLoading(false);
+        swal("Success", "Success", "success");
+
+      })
+      .catch((e) => {
+        swal("Warning!", "An Error Occured, Try Again!", "error");
+        console.error(e);
+      });
+    } else {
+      sp.web.lists
+      .getByTitle(`GiftBeneficiaries`)
+      .items.getById(Number(itemID))
+      .update({
+        ApprovalStatus: "Approved",
+      })
+      .then((res) => {
+        setLoading(false);
+        swal("Success", "Success", "success");
+
+      })
+      .catch((e) => {
+        setLoading(false)
+        swal("Warning!", "An Error Occured, Try Again!", "error");
+        console.error(e);
+      });
+    }
   };
   const declineHandler = () => {
     setModal(true);
@@ -214,7 +315,7 @@ const Document = ({match}) => {
 
           <div style={{width:"40%",display:"flex",flexDirection:"row",justifyContent:"space-between",marginTop:"2rem"}}> 
           <button onClick={declineHandler} disabled={ApprovalStatus === "Approved" || ApprovalStatus === "Declined"  ? true : false} className="mtn__btn mtn__black"> Reject</button>
-            <button onClick={approveHandler}  disabled={ApprovalStatus === "Approved" || ApprovalStatus === "Declined" ? true : false} className= {ApprovalStatus === "Approved" ? "mtn__btn mtn__blackOutline" : "mtn__btn mtn__yellow"}> 
+            <button onClick={updateHandler}  disabled={ApprovalStatus === "Approved" || ApprovalStatus === "Declined" ? true : false} className= {ApprovalStatus === "Approved" ? "mtn__btn mtn__blackOutline" : "mtn__btn mtn__yellow"}> 
             Approve
             </button>
           </div>
