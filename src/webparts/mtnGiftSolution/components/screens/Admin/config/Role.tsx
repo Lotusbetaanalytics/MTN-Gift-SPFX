@@ -82,7 +82,7 @@ const Role = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     setLoading(true)
-    if (Title.length < 1) {
+    if (!Title) {
       swal("Warning!", "Invalid Role", "error");
       setLoading(false)
     } else {

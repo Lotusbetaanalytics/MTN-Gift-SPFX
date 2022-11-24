@@ -92,7 +92,7 @@ const Roles = ({ context }) => {
   const submitHandler = (e) => {
     e.preventDefault();
     setLoading(true)
-    if ( role.length < 1 || email.length < 1) {
+    if ( !role || !email) {
       swal("Warning!", "All fields required", "error");
       setLoading(false)
     } else {

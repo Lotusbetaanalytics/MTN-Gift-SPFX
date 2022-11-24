@@ -191,7 +191,7 @@ const singleUploadFile = (e) => {
                 <Input
                   value={surname}
                   onChange={(e) => setSurname(e.target.value)}
-                  required={false}
+                  required={true}
                   title={"Surname"}
                   readOnly={false}
                   size={"sm"}
@@ -202,7 +202,7 @@ const singleUploadFile = (e) => {
                 <Input
                   value={FirstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  required={false}
+                  required={true}
                   title={"FirstName"}
                   readOnly={false}
                   size={"sm"}
@@ -213,7 +213,7 @@ const singleUploadFile = (e) => {
                 <Input
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
-                  required={false}
+                  required={true}
                   title={"Job Title"}
                   readOnly={false}
                   size={"sm"}
@@ -224,7 +224,7 @@ const singleUploadFile = (e) => {
                 <Input
                   value={Email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required={false}
+                  required={true}
                   title={"Email"}
                   readOnly={false}
                   size={"sm"}
@@ -236,7 +236,7 @@ const singleUploadFile = (e) => {
                 <Input
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  required={false}
+                  required={true}
                   title={"Location"}
                   readOnly={false}
                   size={"sm"}
@@ -247,7 +247,7 @@ const singleUploadFile = (e) => {
                 <Input
                   value={pickupLocation}
                   onChange={(e) => setPickupLocation(e.target.value)}
-                  required={false}
+                  required={true}
                   title={"Pickup Location"}
                   readOnly={false}
                   size={"sm"}
@@ -259,7 +259,7 @@ const singleUploadFile = (e) => {
                 <Input
                   value={vendor}
                   onChange={(e) => setVendor(e.target.value)}
-                  required={false}
+                  required={true}
                   title={"Vendor"}
                   readOnly={false}
                   size={"sm"}
@@ -270,7 +270,7 @@ const singleUploadFile = (e) => {
                 <Input
                   value={division}
                   onChange={(e) => setDivision(e.target.value)}
-                  required={false}
+                  required={true}
                   title={"Division"}
                   readOnly={false}
                   size={"sm"}

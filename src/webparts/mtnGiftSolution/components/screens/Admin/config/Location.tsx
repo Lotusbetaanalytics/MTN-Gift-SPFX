@@ -82,7 +82,7 @@ const Location = () => {
   const submitHandler = (e) => {
     e.preventDefault();
     setLoading(true)
-    if (Location.length < 1) {
+    if (!Location) {
       swal("Warning!", "Invalid Location", "error");
       setLoading(false)
     } else {
