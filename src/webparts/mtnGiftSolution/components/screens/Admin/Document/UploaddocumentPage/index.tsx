@@ -1,14 +1,19 @@
 import * as React from "react";
-import { FileUpload, Header, Input, Navigation, Search, Sidebar } from "../../../../Containers";
+import {
+  FileUpload,
+  Header,
+  Input,
+  Navigation,
+  Search,
+  Sidebar,
+} from "../../../../Containers";
 import styles from "./styles.module.scss";
 import { sp } from "@pnp/sp";
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 import swal from "sweetalert";
 import Modal from "../../../../Containers/Modal";
 
-
-
-const Document = ({history}) => {
+const Document = ({ history }) => {
   const [employeeEmail, setEmployeeEmail] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [surname, setSurname] = React.useState("");
@@ -21,73 +26,75 @@ const Document = ({history}) => {
   const [pickupPerson, setPickupPerson] = React.useState("");
   const [division, setDivision] = React.useState("");
   const [vendor, setVendor] = React.useState("");
-  const [loading,setLoading]=React.useState(false)
-  const [updateStatus,setUpdateStatus] = React.useState("")
-  const [modal,setModal] = React.useState(false)
+  const [loading, setLoading] = React.useState(false);
+  const [updateStatus, setUpdateStatus] = React.useState("");
+  const [modal, setModal] = React.useState(false);
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
       setEmployeeEmail(response.Email);
-      const userEmail = (response.Email)
+      const userEmail = response.Email;
       sp.web.lists
-      .getByTitle("Admin")
-      .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
-      .get()
-      .then((response) => {
-       
-        if (response.length === 0) {
-          sweetAlert(
-            "Warning!",
-            "you are not authorize to use this portal",
-            "error"
-          );
-          history.push("/");
-        }
-    })
+        .getByTitle("Admin")
+        .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
+        .get()
+        .then((response) => {
+          if (response.length === 0) {
+            sweetAlert(
+              "Warning!",
+              "you are not authorize to use this portal",
+              "error"
+            );
+            history.push("/");
+          }
+        });
     });
   }, []);
- 
-  const modalHandler = ()=>{
-    setModal(true)
-  }
 
-  const editHandler = (e) =>{
-    setLoading(true)
-    e.preventDefault()
-    sp.web.lists.getByTitle(`GiftBeneficiaries`).items.add({
-        Phone:phone,
-        Surname:surname,
-        FirstName:FirstName,
-        JobTitle:jobTitle,
-        Email:Email,
-        EmployeeLocation:location,
-        PickupLocation:pickupLocation,
-        PickupPerson:"Self",
-        Division:division,
-        Vendor:vendor, 
-    }).then((res) => {
-      setModal(false)
-      setLoading(false)
+  const modalHandler = () => {
+    setModal(true);
+  };
+
+  const editHandler = (e) => {
+    setLoading(true);
+    e.preventDefault();
+    sp.web.lists
+      .getByTitle(`GiftBeneficiaries`)
+      .items.add({
+        Phone: phone,
+        Surname: surname,
+        FirstName: FirstName,
+        JobTitle: jobTitle,
+        Email: Email,
+        EmployeeLocation: location,
+        PickupLocation: pickupLocation,
+        PickupPerson: "Self",
+        Division: division,
+        Vendor: vendor,
+      })
+      .then((res) => {
+        setModal(false);
+        setLoading(false);
         swal("Success", "Success", "success");
         history.push(`/admin/document`);
-    }).catch((e) => {
+      })
+      .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
-    });
-  }
+      });
+  };
 
-
-const singleUploadFile = (e) => {
-  e.preventDefault;
-  setLoading(true);
-  if (e.target.files) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
+  const singleUploadFile = (e) => {
+    e.preventDefault;
+    setLoading(true);
+    if (e.target.files) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
         let data = e.target.result;
         let workbook = XLSX.read(data, { type: "array" });
         let sheetName = workbook.SheetNames[0];
         let worksheet = workbook.Sheets[sheetName];
         let json = XLSX.utils.sheet_to_json(worksheet);
-        console.log(json.length)
+        console.log(json.length);
         for (let i = 0; i < json.length; i++) {
           if (
             json[i]["Surname"] &&
@@ -98,10 +105,9 @@ const singleUploadFile = (e) => {
             json[i]["PickupLocation"] &&
             json[i]["Division"] &&
             json[i]["Vendor"] &&
-            json[i]["Phone"] 
-            
+            json[i]["Phone"]
           ) {
-            console.log("sinsins")
+            console.log("sinsins");
             sp.web.lists
               .getByTitle("GiftBeneficiaries")
               .items.add({
@@ -128,18 +134,24 @@ const singleUploadFile = (e) => {
             swal("Warning!", "Some Fields are required!", "warning");
           }
         }
-    };
-    reader.readAsArrayBuffer(e.target.files[0]);
-    
-  }
-}
+      };
+      reader.readAsArrayBuffer(e.target.files[0]);
+    }
+  };
   return (
     <div className="appContainer">
       <Sidebar />
       <div className="contentsRight">
         <Header title={"Document"} userEmail={employeeEmail} />
         <div className="spaceBetween">
-          <div></div>
+          <div>
+            <a
+              href="https://mtncloud.sharepoint.com/:x:/r/sites/UATApplications/MTNGift/Shared%20Documents/MTN%20GIFT%20TEMPLATE.xlsx?d=wb4a2a6eababa492a985203271496789c&csf=1&web=1&e=nYRPWZ"
+              download
+            >
+              <button className="gray_mtn">Download template</button>
+            </a>
+          </div>
           <Navigation />
         </div>
         <div className="center">
@@ -150,7 +162,7 @@ const singleUploadFile = (e) => {
 
             <div className={styles.uploadBtn}>
               <FileUpload
-              multiple={false}
+                multiple={false}
                 title="Bulk Upload"
                 onChange={singleUploadFile}
               />
@@ -162,120 +174,126 @@ const singleUploadFile = (e) => {
             </div>
 
             <div className={styles.uploadBtn}>
-            <button onClick={modalHandler} className="gray_mtn" >
-              Single Upload
-            </button>
+              <button onClick={modalHandler} className="gray_mtn">
+                Single Upload
+              </button>
               {/* <input type="file" onChange={readUploadFile} multiple/> */}
             </div>
           </div>
         </div>
         <Modal
-        isVisible={modal}
-        title=""
-        size="xl"
-        content={
-          <form onSubmit={editHandler}>
-              <div style={{display:"grid", gridTemplateColumns: "32% 32% 32%",justifyContent:"center"}}>
-              <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  required={true}
-                  title={"Phone"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
+          isVisible={modal}
+          title=""
+          size="xl"
+          content={
+            <form onSubmit={editHandler}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "32% 32% 32%",
+                  justifyContent: "center",
+                }}
+              >
+                <div style={{ marginTop: "1rem" }}>
+                  <Input
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    required={true}
+                    title={"Phone"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
                 </div>
                 <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={surname}
-                  onChange={(e) => setSurname(e.target.value)}
-                  required={true}
-                  title={"Surname"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
-                </div>
-                 <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={FirstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required={true}
-                  title={"FirstName"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
+                  <Input
+                    value={surname}
+                    onChange={(e) => setSurname(e.target.value)}
+                    required={true}
+                    title={"Surname"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
                 </div>
                 <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
-                  required={true}
-                  title={"Job Title"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
+                  <Input
+                    value={FirstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required={true}
+                    title={"FirstName"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
                 </div>
                 <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={Email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required={true}
-                  title={"Email"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
-                </div>
-                
-                <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  required={true}
-                  title={"Location"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
+                  <Input
+                    value={jobTitle}
+                    onChange={(e) => setJobTitle(e.target.value)}
+                    required={true}
+                    title={"Job Title"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
                 </div>
                 <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={pickupLocation}
-                  onChange={(e) => setPickupLocation(e.target.value)}
-                  required={true}
-                  title={"Pickup Location"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
+                  <Input
+                    value={Email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required={true}
+                    title={"Email"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
                 </div>
-               
+
                 <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={vendor}
-                  onChange={(e) => setVendor(e.target.value)}
-                  required={true}
-                  title={"Vendor"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
+                  <Input
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    required={true}
+                    title={"Location"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
                 </div>
                 <div style={{ marginTop: "1rem" }}>
-                <Input
-                  value={division}
-                  onChange={(e) => setDivision(e.target.value)}
-                  required={true}
-                  title={"Division"}
-                  readOnly={false}
-                  size={"sm"}
-                  type={"text"}
-                />
+                  <Input
+                    value={pickupLocation}
+                    onChange={(e) => setPickupLocation(e.target.value)}
+                    required={true}
+                    title={"Pickup Location"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
+                </div>
+
+                <div style={{ marginTop: "1rem" }}>
+                  <Input
+                    value={vendor}
+                    onChange={(e) => setVendor(e.target.value)}
+                    required={true}
+                    title={"Vendor"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
+                </div>
+                <div style={{ marginTop: "1rem" }}>
+                  <Input
+                    value={division}
+                    onChange={(e) => setDivision(e.target.value)}
+                    required={true}
+                    title={"Division"}
+                    readOnly={false}
+                    size={"sm"}
+                    type={"text"}
+                  />
                 </div>
                 <button
                   style={{ marginTop: "2rem" }}
@@ -285,12 +303,11 @@ const singleUploadFile = (e) => {
                   Submit
                 </button>
               </div>
-            
-          </form>
-        }
-        onClose={() => setModal(false)}
-        footer=""
-      />
+            </form>
+          }
+          onClose={() => setModal(false)}
+          footer=""
+        />
       </div>
     </div>
   );
