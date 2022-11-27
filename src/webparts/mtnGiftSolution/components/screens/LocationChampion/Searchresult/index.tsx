@@ -18,7 +18,7 @@ import Modal from "../../../Containers/Modal";
 import { Spinner } from "office-ui-fabric-react";
 
 const Document = () => {
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = React.useState(false);
   const proxyOption = [{ value: "By the Portal" }, { value: "By Email" }];
   const history = useHistory();
 
@@ -116,42 +116,46 @@ const Document = () => {
         setUniqueCode(res[0].UniqueCode);
         setID(res[0].ID);
         if (res.length > 0) {
-          setQuery("data");
+          setQuery(true);
         } else {
-          setQuery("no data");
+          setQuery(false);
         }
         setCollectionStatus(res[0].CollectionStatus);
       });
   }, [time, phone]);
 
   const clickHandler = () => {
+    setLoading(true);
     sp.web.lists
       .getByTitle(`GiftBeneficiaries`)
       .items.filter(`ApprovalStatus eq 'Approved' and Phone eq '${phone}'`)
       .get()
       .then((res) => {
         console.log(res);
-        setLoading(false);
-        setPhone(res[0].Phone);
-        setSurname(res[0].Surname);
-        setFirstName(res[0].FirstName);
-        setJobTitle(res[0].JobTitle);
-        setEmail(res[0].Email);
-        setLocation(res[0].EmployeeLocation);
-        setPickupLocation(res[0].PickupLocation);
-        setPickupPerson(res[0].PickupPerson);
-        setDelegateFullname(res[0].DelegateFullname);
-        setDelegatePhone(res[0].DelegatePhone);
-        setDivision(res[0].Division);
-        setVendor(res[0].Vendor);
-        setUniqueCode(res[0].UniqueCode);
-        setID(res[0].ID);
+
         if (res.length > 0) {
-          setQuery("data");
+          setQuery(true);
+          setLoading(false);
+          setPhone(res[0].Phone);
+          setSurname(res[0].Surname);
+          setFirstName(res[0].FirstName);
+          setJobTitle(res[0].JobTitle);
+          setEmail(res[0].Email);
+          setLocation(res[0].EmployeeLocation);
+          setPickupLocation(res[0].PickupLocation);
+          setPickupPerson(res[0].PickupPerson);
+          setDelegateFullname(res[0].DelegateFullname);
+          setDelegatePhone(res[0].DelegatePhone);
+          setDivision(res[0].Division);
+          setVendor(res[0].Vendor);
+          setUniqueCode(res[0].UniqueCode);
+          setID(res[0].ID);
+          setCollectionStatus(res[0].CollectionStatus);
         } else {
-          setQuery("no data");
+          setQuery(false);
+          swal("Warning!", "Employee not found!", "error");
+          setLoading(false);
         }
-        setCollectionStatus(res[0].CollectionStatus);
       });
   };
   const openUpadate = () => {
@@ -173,36 +177,46 @@ const Document = () => {
         ProxyType: proxyType,
       })
       .then((res) => {
-        sp.web.lists
-          .getByTitle("Report")
-          .items.add({
-            Phone: phone,
-            Surname: surname,
-            FirstName: FirstName,
-            JobTitle: jobTitle,
-            Email: Email,
-            Location: location,
-            PickupLocation: pickupLocation,
-            PickupPerson: pickupPerson,
-            DelegateFullname: delegateFullname,
-            DelegatePhone: delegatePhone,
-            UniqueCode: uniqueCode,
-            Division: division,
-            Vendor: vendor,
-            CollectionStatus: "Collected",
-            Date: date,
-            Time: time,
-          })
-          .then((res) => {
-            setLoading(false);
-            setModal(false);
-            swal("Success", "Confirmation successfully", "success");
-            history.push("/locationchampion/report");
-          })
-          .catch((e) => {
-            swal("Warning!", "An Error Occured, Try Again!", "error");
-            console.error(e);
-          });
+        if (res) {
+          sp.web.lists
+            .getByTitle("Report")
+            .items.add({
+              Phone: phone,
+              Surname: surname,
+              FirstName: FirstName,
+              JobTitle: jobTitle,
+              Email: Email,
+              Location: location,
+              PickupLocation: pickupLocation,
+              PickupPerson: pickupPerson,
+              DelegateFullname: delegateFullname,
+              DelegatePhone: delegatePhone,
+              UniqueCode: uniqueCode,
+              Division: division,
+              Vendor: vendor,
+              CollectionStatus: "Collected",
+              Date: date,
+              Time: time,
+            })
+            .then((response) => {
+              if (response) {
+                sp.web.lists
+                  .getByTitle("GiftBeneficiaries")
+                  .items.getById(Number(ID))
+                  .delete()
+                  .then((deleted) => {
+                    setLoading(false);
+                    setModal(false);
+                    swal("Success", "Confirmation successfully", "success");
+                    history.push("/locationchampion/report");
+                  });
+              }
+            });
+        }
+      })
+      .catch((e) => {
+        swal("Warning!", "An Error Occured, Try Again!", "error");
+        console.error(e);
       });
   };
   const handler = (e) => {
@@ -247,7 +261,7 @@ const Document = () => {
         </div>
         {loading ? (
           <Spinner />
-        ) : query === "data" ? (
+        ) : query ? (
           <div
             style={{
               display: "flex",
@@ -346,8 +360,6 @@ const Document = () => {
               </button>
             </div>
           </div>
-        ) : query === "no data" ? (
-          <div>Not found</div>
         ) : null}
       </div>
       <Modal
