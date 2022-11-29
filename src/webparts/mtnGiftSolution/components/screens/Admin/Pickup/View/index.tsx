@@ -110,14 +110,6 @@ const Document = ({ context }) => {
       });
   }, []);
 
-  const modalHandler = () => {
-    setModal(true);
-  };
-
-  const backHandler = () => {
-    history.push("/admin/document");
-  };
-
   // const approveHandler = () => {
   //   sp.web.lists
   //     .getByTitle("GiftBeneficiaries")
@@ -211,14 +203,14 @@ const Document = ({ context }) => {
         })
         .then((res) => {
           if (res) {
-            setLoading(false);
             sp.web.lists
               .getByTitle(`GiftBeneficiaries`)
-              .items.get()
+              .items.filter(`ID eq '${itemID}'`)
+              .get()
               .then((res) => {
                 setApprovalStatus(res[0].ApprovalStatus);
-                // check if
               });
+            setLoading(false);
             swal("Success", "Success", "success");
           }
         })

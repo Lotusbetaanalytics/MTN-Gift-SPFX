@@ -43,7 +43,6 @@ const Document = () => {
   const [date, setDate] = React.useState("");
   const [time, setTime] = React.useState("");
   const [ID, setID] = React.useState("");
-  const [blank, setBlank] = React.useState(false);
 
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
@@ -99,7 +98,6 @@ const Document = () => {
       .items.filter(`ApprovalStatus eq 'Approved' and Phone eq '${phone}'`)
       .get()
       .then((res) => {
-        console.log(res);
         setLoading(false);
         setPhone(res[0].Phone);
         setSurname(res[0].Surname);
@@ -131,8 +129,6 @@ const Document = () => {
       .items.filter(`ApprovalStatus eq 'Approved' and Phone eq '${phone}'`)
       .get()
       .then((res) => {
-        console.log(res);
-
         if (res.length > 0) {
           setQuery(true);
           setLoading(false);
@@ -207,7 +203,7 @@ const Document = () => {
                   .then((deleted) => {
                     setLoading(false);
                     setModal(false);
-                    swal("Success", "Confirmation successfully", "success");
+                    swal("Success", "Confirmation successful", "success");
                     history.push("/locationchampion/report");
                   });
               }

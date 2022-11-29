@@ -6,7 +6,6 @@ import MaterialTable from "material-table";
 import Spinner from "../../../../Containers/Spinner";
 import swal from "sweetalert";
 
-
 const Document = () => {
   const history = useHistory();
 
@@ -64,7 +63,7 @@ const Document = () => {
     setLoading(true);
     sp.web.lists
       .getByTitle(`GiftBeneficiaries`)
-      .items.get()
+      .items.getAll()
       .then((res) => {
         setData(res);
         setLoading(false);
@@ -74,28 +73,27 @@ const Document = () => {
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
       setEmployeeEmail(response.Email);
-      const userEmail = (response.Email)
+      const userEmail = response.Email;
       sp.web.lists
-      .getByTitle("Admin")
-      .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
-      .get()
-      .then((response) => {
-       
-        if (response.length === 0) {
-          sweetAlert(
-            "Warning!",
-            "you are not authorize to use this portal",
-            "error"
-          );
-          history.push("/");
-        }
-    })
+        .getByTitle("Admin")
+        .items.filter(`Role eq 'Admin' and Email eq '${userEmail}'`)
+        .getAll()
+        .then((response) => {
+          if (response.length === 0) {
+            sweetAlert(
+              "Warning!",
+              "you are not authorize to use this portal",
+              "error"
+            );
+            history.push("/");
+          }
+        });
     });
   }, []);
 
-  const homeHandler = () =>{
-    history.push("/admin/document/upload")
-  }
+  const homeHandler = () => {
+    history.push("/admin/document/upload");
+  };
 
   const deleteHandler = (id) => {
     if (window.confirm("Are you sure you want to delete")) {
@@ -121,9 +119,12 @@ const Document = () => {
       <div className="contentsRight">
         <Header title={"Document"} userEmail={employeeEmail} />
         <div className="spaceBetween">
-          <div> <button className="mtn__btn mtn__yellow" onClick={homeHandler}>
+          <div>
+            {" "}
+            <button className="mtn__btn mtn__yellow" onClick={homeHandler}>
               Add Employee
-            </button></div>
+            </button>
+          </div>
           <Navigation document="active" />
         </div>
         <div className="center" style={{ marginTop: "50px" }}>
@@ -171,7 +172,7 @@ const Document = () => {
                   icon: "visibility",
                   iconProps: { style: { fontSize: "11px", color: "black" } },
                   tooltip: "Delete",
-  
+
                   onClick: (event, rowData) => {
                     deleteHandler(rowData.ID);
                   },
