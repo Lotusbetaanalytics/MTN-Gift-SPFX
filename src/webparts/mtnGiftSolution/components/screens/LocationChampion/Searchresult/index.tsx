@@ -173,48 +173,54 @@ const Document = () => {
         ProxyType: proxyType,
       })
       .then((res) => {
-        if (res) {
-          sp.web.lists
-            .getByTitle("Report")
-            .items.add({
-              Phone: phone,
-              Surname: surname,
-              FirstName: FirstName,
-              JobTitle: jobTitle,
-              Email: Email,
-              Location: location,
-              PickupLocation: pickupLocation,
-              PickupPerson: pickupPerson,
-              DelegateFullname: delegateFullname,
-              DelegatePhone: delegatePhone,
-              UniqueCode: uniqueCode,
-              Division: division,
-              Vendor: vendor,
-              CollectionStatus: "Collected",
-              Date: date,
-              Time: time,
-            })
-            .then((response) => {
-              if (response) {
-                sp.web.lists
-                  .getByTitle("GiftBeneficiaries")
-                  .items.getById(Number(ID))
-                  .delete()
-                  .then((deleted) => {
-                    setLoading(false);
-                    setModal(false);
-                    swal("Success", "Confirmation successful", "success");
-                    history.push("/locationchampion/report");
-                  });
-              }
-            });
-        }
+        console.log("update for collection");
+        sp.web.lists
+          .getByTitle("Report")
+          .items.add({
+            Phone: phone,
+            Surname: surname,
+            FirstName: FirstName,
+            JobTitle: jobTitle,
+            Email: Email,
+            Location: location,
+            PickupLocation: pickupLocation,
+            PickupPerson: pickupPerson,
+            DelegateFullname: delegateFullname,
+            DelegatePhone: delegatePhone,
+            UniqueCode: uniqueCode,
+            Division: division,
+            Vendor: vendor,
+            CollectionStatus: "Collected",
+            Date: date,
+            Time: time,
+          })
+          .then((response) => {
+            console.log("report added");
+            sp.web.lists
+              .getByTitle("GiftBeneficiaries")
+              .items.getById(Number(ID))
+              .delete()
+              .then((deleted) => {
+                console.log("delete");
+                setLoading(false);
+                setModal(false);
+                swal("Success", "Confirmation successful", "success");
+                history.push("/locationchampion/report");
+              })
+              .catch((e) => {
+                swal("Warning!", "An Error Occured, Try Again!", "error");
+                console.error(e);
+                console.log("error from adding and deleting");
+              });
+          });
       })
       .catch((e) => {
         swal("Warning!", "An Error Occured, Try Again!", "error");
         console.error(e);
+        console.log("error from updating");
       });
   };
+
   const handler = (e) => {
     e.preventDefault();
     setPhone(e.target.value.slice(0, 11));
