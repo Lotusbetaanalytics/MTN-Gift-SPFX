@@ -161,7 +161,8 @@ const Document = () => {
     history.push("/home");
   };
 
-  const updateHandler = () => {
+  const updateHandler = (e) => {
+    e.preventDefault();
     setLoading(true);
     sp.web.lists
       .getByTitle("GiftBeneficiaries")
