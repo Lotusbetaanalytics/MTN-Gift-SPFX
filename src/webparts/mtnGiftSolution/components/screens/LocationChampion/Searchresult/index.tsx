@@ -95,7 +95,9 @@ const Document = () => {
 
     sp.web.lists
       .getByTitle(`GiftBeneficiaries`)
-      .items.filter(`ApprovalStatus eq 'Approved' and Phone eq '${phone}'`)
+      .items.filter(
+        `ApprovalStatus eq 'Approved' and Phone eq '${phone}' and CollectionStatus eq 'Pending'`
+      )
       .get()
       .then((res) => {
         setLoading(false);
@@ -126,7 +128,9 @@ const Document = () => {
     setLoading(true);
     sp.web.lists
       .getByTitle(`GiftBeneficiaries`)
-      .items.filter(`ApprovalStatus eq 'Approved' and Phone eq '${phone}'`)
+      .items.filter(
+        `ApprovalStatus eq 'Approved' and Phone eq '${phone}' and CollectionStatus eq 'Pending'`
+      )
       .get()
       .then((res) => {
         if (res.length > 0) {
@@ -172,9 +176,10 @@ const Document = () => {
         LocationChampionEmail: employeeEmail,
         CollectedBy: pickupPerson,
         ProxyType: proxyType,
+        Date: date,
+        Time: time,
       })
       .then((res) => {
-        console.log("update for collection");
         sp.web.lists
           .getByTitle("Report")
           .items.add({
@@ -196,23 +201,15 @@ const Document = () => {
             Time: time,
           })
           .then((response) => {
-            console.log("report added");
             sp.web.lists
-              .getByTitle("GiftBeneficiaries")
-              .items.getById(Number(ID))
-              .delete()
-              .then((deleted) => {
-                console.log("delete");
-                setLoading(false);
-                setModal(false);
-                swal("Success", "Confirmation successful", "success");
-                history.push("/locationchampion/report");
-              })
-              .catch((e) => {
-                swal("Warning!", "An Error Occured, Try Again!", "error");
-                console.error(e);
-                console.log("error from adding and deleting");
-              });
+              .getByTitle(`GiftBeneficiaries`)
+              .items.filter(
+                `ApprovalStatus eq 'Approved' and Phone eq '${phone}' and CollectionStatus eq 'Pending'`
+              )
+              .get()
+              .then((res) => {});
+            setLoading(false);
+            swal("success", "Success", "success");
           });
       })
       .catch((e) => {

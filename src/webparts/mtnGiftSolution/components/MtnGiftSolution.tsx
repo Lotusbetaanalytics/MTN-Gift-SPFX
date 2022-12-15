@@ -5,7 +5,15 @@ import { Route, Switch, HashRouter } from "react-router-dom";
 import * as jQuery from "jquery";
 import "./global.scss";
 import "./assets/icon.scss";
-import { ErrorPage, Home, Homepage, ViewPickup } from "./screens";
+import {
+  CollectionReport,
+  Dashboard,
+  ErrorPage,
+  Home,
+  Homepage,
+  TotalUploads,
+  ViewPickup,
+} from "./screens";
 import {
   AdminViewDocument,
   AdminViewReport,
@@ -38,8 +46,7 @@ export default class MtnGiftSolution extends React.Component<
     jQuery(".SPCanvas-canvas").prop("style", "max-width: none");
     jQuery(".CanvasZone").prop("style", "max-width: none");
     return (
-      
-       <>
+      <>
         <HashRouter>
           <Switch>
             <Route path="/" exact component={Home} />
@@ -47,16 +54,29 @@ export default class MtnGiftSolution extends React.Component<
             <Route
               path="/admin/document/upload"
               exact
-              component={UploadDocument}
+              render={(props) => (
+                <UploadDocument context={this.props.context} />
+              )}
             />
             <Route path="/admin/document" exact component={DocumentPage} />
+            <Route
+              path="/admin/collection-report"
+              exact
+              component={CollectionReport}
+            />
+            <Route path="/admin/total-upload" exact component={TotalUploads} />
+            <Route path="/admin/dashboard" exact component={Dashboard} />
             <Route
               path="/admin/document/:id"
               exact
               component={AdminViewDocument}
             />
             <Route path="/admin/pickup" exact component={Pickup} />
-            <Route path="/admin/pickup/:id" exact render={(props) => <ViewPickup context={this.props.context}/>}  />
+            <Route
+              path="/admin/pickup/:id"
+              exact
+              render={(props) => <ViewPickup context={this.props.context} />}
+            />
             <Route path="/admin/report" exact component={Report} />
             <Route path="/admin/report/:id" exact component={AdminViewReport} />
             <Route
@@ -83,18 +103,16 @@ export default class MtnGiftSolution extends React.Component<
               path="/employee/location"
               exact
               component={EmployeePickLocation}
-              />
+            />
             <Route
               path="/employee/location/edit"
               exact
               component={EmployeePickLocationEdit}
             />
-             <Route component={ErrorPage} />
+            <Route component={ErrorPage} />
           </Switch>
         </HashRouter>
-        </>
-    
+      </>
     );
   }
 }
-

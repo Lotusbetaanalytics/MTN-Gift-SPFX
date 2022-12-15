@@ -1,10 +1,18 @@
 import * as React from "react";
-import { Header, Navigation, Search, Sidebar } from "../../../../Containers";
+import {
+  Header,
+  Navigation,
+  Search,
+  Select,
+  Sidebar,
+} from "../../../../Containers";
 import { useHistory } from "react-router-dom";
 import { sp } from "@pnp/sp";
 import MaterialTable from "material-table";
-import Spinner from "../../../../Containers/Spinner";
+import { FaEdit, FaTrash, FaEye, FaPlus } from "react-icons/fa";
 import swal from "sweetalert";
+import Spinner from "../../../../Containers/Spinner";
+import { displayIcon } from "../../../../Containers/hooks/tableIcon";
 
 const Document = () => {
   const history = useHistory();
@@ -50,25 +58,12 @@ const Document = () => {
   ]);
 
   const [employeeEmail, setEmployeeEmail] = React.useState("");
-  const [uploadFile, setUploadedFile] = React.useState("");
-  const [data, setData] = React.useState([]);
-  const [name, setName] = React.useState("");
-  const [role, setRole] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [edit, setEdit] = React.useState(false);
-  const [id, setID] = React.useState(null);
 
-  React.useEffect(() => {
-    setLoading(true);
-    sp.web.lists
-      .getByTitle(`GiftBeneficiaries`)
-      .items.getAll()
-      .then((res) => {
-        setData(res);
-        setLoading(false);
-      });
-  }, []);
+  const [data, setData] = React.useState([]);
+
+  const [loading, setLoading] = React.useState(false);
+  const [id, setID] = React.useState(null);
+  const [query, setQuery] = React.useState("Pending");
 
   React.useEffect(() => {
     sp.profiles.myProperties.get().then((response) => {
@@ -91,25 +86,113 @@ const Document = () => {
     });
   }, []);
 
+  React.useEffect(() => {
+    setLoading(true);
+    sp.web.lists
+      .getByTitle(`GiftBeneficiaries`)
+      .items.filter(`UpdateStatus eq '${query}'`)
+      .getAll()
+      .then((res) => {
+        setData(res);
+        setLoading(false);
+      });
+  }, [query]);
+
   const homeHandler = () => {
     history.push("/admin/document/upload");
   };
 
-  const deleteHandler = (id) => {
-    if (window.confirm("Are you sure you want to delete")) {
-      sp.web.lists
-        .getByTitle("GiftBeneficiaries")
-        .items.getById(id)
-        .delete()
-        .then((res) => {
-          swal("Success", "deleted successfully", "success");
-          sp.web.lists
-            .getByTitle(`GiftBeneficiaries`)
-            .items.get()
-            .then((res) => {
-              setData(res);
+  const selectOption = [
+    { value: "Pending" },
+    { value: "Approved" },
+    { value: "Declined" },
+  ];
+
+  const selectHandler = (e) => {
+    e.preventDefault();
+    setQuery(e.target.value);
+  };
+
+  const approveHandler = (id) => {
+    setLoading(true);
+    let selectedIDs = id.map((x) => x.ID);
+    let listName = sp.web.lists.getByTitle("GiftBeneficiaries");
+    try {
+      listName
+        .getListItemEntityTypeFullName()
+        .then((entityTypeFullName: any) => {
+          let createBatchRequest = sp.web.createBatch();
+
+          for (const ItemID of selectedIDs) {
+            listName.items
+              .getById(ItemID)
+              .inBatch(createBatchRequest)
+              .update({ UpdateStatus: `Approved` }, "*", entityTypeFullName);
+          }
+
+          createBatchRequest
+            .execute()
+            .then((createResponse: any) => {
+              console.log("All Item Updated");
+              setLoading(false);
+              sp.web.lists
+                .getByTitle(`GiftBeneficiaries`)
+                .items.filter(`UpdateStatus eq '${query}'`)
+                .getAll()
+                .then((res) => {
+                  setData(res);
+                  setLoading(false);
+                });
+            })
+            .catch((error) => {
+              console.log(error);
             });
         });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteHandler = (id) => {
+    setLoading(true);
+    let selectedIDs = id.map((x) => x.ID);
+    let listName = sp.web.lists.getByTitle("GiftBeneficiaries");
+    try {
+      listName
+        .getListItemEntityTypeFullName()
+        .then((entityTypeFullName: any) => {
+          let deleteBacthRequest = sp.web.createBatch();
+
+          for (const ItemID of selectedIDs) {
+            listName.items
+              .getById(ItemID)
+              .inBatch(deleteBacthRequest)
+              .recycle()
+              .then((r) => {
+                console.log("Moved on Recyle bin");
+              });
+          }
+
+          deleteBacthRequest
+            .execute()
+            .then((deleteResponse: any) => {
+              console.log("All items Moved on Recyle bin");
+              setLoading(false);
+              sp.web.lists
+                .getByTitle(`GiftBeneficiaries`)
+                .items.filter(`UpdateStatus eq '${query}'`)
+                .getAll()
+                .then((res) => {
+                  setData(res);
+                  setLoading(false);
+                });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -120,12 +203,20 @@ const Document = () => {
         <Header title={"Document"} userEmail={employeeEmail} />
         <div className="spaceBetween">
           <div>
-            {" "}
             <button className="mtn__btn mtn__yellow" onClick={homeHandler}>
               Add Employee
             </button>
           </div>
           <Navigation document="active" />
+        </div>
+        <div style={{ width: "120px", marginTop: "30px" }}>
+          <Select
+            onChange={selectHandler}
+            title={query}
+            value={query}
+            options={selectOption}
+            size="mtn__adult"
+          />
         </div>
         <div className="center" style={{ marginTop: "50px" }}>
           {loading ? (
@@ -137,6 +228,7 @@ const Document = () => {
               data={data}
               options={{
                 exportButton: true,
+                selection: true,
                 actionsCellStyle: {
                   backgroundColor: "none",
                   color: "#FF00dd",
@@ -161,11 +253,26 @@ const Document = () => {
               actions={[
                 {
                   icon: "visibility",
-                  iconProps: { style: { fontSize: "11px", color: "gold" } },
+                  iconProps: {
+                    style: {
+                      fontSize: "11px",
+                      color: "gold",
+                      marginBottom: "30px",
+                    },
+                  },
                   tooltip: "View",
 
                   onClick: (event, rowData) => {
-                    history.push(`/admin/document/${rowData.ID}`);
+                    history.push(`/admin/document/${rowData[0].ID}`);
+                  },
+                },
+                {
+                  icon: "visibility",
+                  iconProps: { style: { fontSize: "11px", color: "black" } },
+                  tooltip: "Select",
+
+                  onClick: (event, rowData) => {
+                    approveHandler(rowData);
                   },
                 },
                 {
@@ -174,7 +281,7 @@ const Document = () => {
                   tooltip: "Delete",
 
                   onClick: (event, rowData) => {
-                    deleteHandler(rowData.ID);
+                    deleteHandler(rowData);
                   },
                 },
               ]}
@@ -182,9 +289,10 @@ const Document = () => {
                 Action: (props) => (
                   <button
                     onClick={(event) => props.action.onClick(event, props.data)}
-                    className="mtn__btn_table mtn__yellow"
+                    // className="mtn__btn_table mtn__yellow"
+                    className={`table_btn`}
                   >
-                    {props.action.tooltip}
+                    {displayIcon(props.action.tooltip)}
                   </button>
                 ),
               }}

@@ -17,4 +17,7 @@ export { default as LocationReport } from "./LocationChampion/ReportTable";
 export { default as LocationView } from "./LocationChampion/View";
 export { default as EmployeePickLocation } from "./Employee/PickLocation";
 export { default as EmployeePickLocationEdit } from "./Employee/EditLocation";
+export { default as Dashboard } from "./Admin/Dashboard";
 export { default as ErrorPage } from "./Error/index";
+export { default as CollectionReport } from "./Admin/Document/Documentpage/collection";
+export { default as TotalUploads } from "./Admin/Report/totalUploads";

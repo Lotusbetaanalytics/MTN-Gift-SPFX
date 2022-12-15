@@ -57,7 +57,7 @@ const Pickup = () => {
     setLoading(true);
     sp.web.lists
       .getByTitle(`Report`)
-      .items.get()
+      .items.getAll()
       .then((res) => {
         setData(res);
         setLoading(false);

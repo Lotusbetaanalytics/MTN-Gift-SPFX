@@ -44,7 +44,6 @@ const Pickup = () => {
   const [data, setData] = React.useState([]);
   const [query, setQuery] = React.useState("Pending");
   const [loading, setLoading] = React.useState(false);
-  
 
   const selectOption = [
     { value: "Pending" },
@@ -55,12 +54,13 @@ const Pickup = () => {
     e.preventDefault();
     setQuery(e.target.value);
   };
+
   React.useEffect(() => {
     setLoading(true);
     sp.web.lists
       .getByTitle(`GiftBeneficiaries`)
       .items.filter(`ApprovalStatus eq '${query}'`)
-      .get()
+      .getAll()
       .then((res) => {
         setData(res);
         setLoading(false);
@@ -85,12 +85,9 @@ const Pickup = () => {
             history.push("/");
           }
         });
-        
     });
-   
   }, []);
 
- 
   return (
     <div className="appContainer">
       <Sidebar />
@@ -152,7 +149,6 @@ const Pickup = () => {
                     history.push(`/admin/pickup/${rowData.ID}`);
                   },
                 },
-               
               ]}
               components={{
                 Action: (props) => (
@@ -167,7 +163,6 @@ const Pickup = () => {
             />
           )}
         </div>
-       
       </div>
     </div>
   );

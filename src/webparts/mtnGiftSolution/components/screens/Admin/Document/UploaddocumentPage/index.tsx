@@ -11,9 +11,21 @@ import styles from "./styles.module.scss";
 import { sp } from "@pnp/sp";
 import * as XLSX from "xlsx";
 import swal from "sweetalert";
+import { useHistory } from "react-router-dom";
 import Modal from "../../../../Containers/Modal";
+import {
+  PeoplePicker,
+  PrincipalType,
+} from "@pnp/spfx-controls-react/lib/PeoplePicker";
+import {
+  HttpClient,
+  IHttpClientOptions,
+  HttpClientResponse,
+} from "@microsoft/sp-http";
+import { CODE } from "../../../config";
 
-const Document = ({ history }) => {
+const Document = ({ context }) => {
+  const history = useHistory();
   const [employeeEmail, setEmployeeEmail] = React.useState("");
   const [phone, setPhone] = React.useState("");
   const [surname, setSurname] = React.useState("");
@@ -138,6 +150,38 @@ const Document = ({ history }) => {
       reader.readAsArrayBuffer(e.target.files[0]);
     }
   };
+
+  async function getRaterPickerItems(items: any[]) {
+    const staff = items[0].secondaryText;
+
+    const URL = `https://prod-nigeria.mtn.ng/ppk/fma/getUserByEmail/${staff}`;
+    const httpClientOptions: IHttpClientOptions = {
+      headers: {
+        "Content-Type": "application/json",
+        apiKey: `${CODE}`,
+      },
+      method: "GET",
+      // mode: "no-cors",
+    };
+    const data = await context.httpClient
+      .get(URL, HttpClient.configurations.v1, httpClientOptions)
+      .then((response: Response): Promise<HttpClientResponse> => {
+        return response.json();
+      });
+    // if (!data.user) return toast.error("Line Manager not found");
+    // setRaterLineManagerName(data.user.lineManagerFullname);
+    // setRaterLineManager(data.user.lineManagerEmail);
+
+    setDepartment(data.user.department);
+    setEmail(data.user.email);
+    const phone = data.user.phoneNumber.substring(4);
+    setPhone(`0${phone}`);
+    setJobTitle(data.user.jobTitle);
+    setDivision(data.user.division);
+    setFirstName(data.user.firstName);
+    setSurname(data.user.lastName);
+    setLocation(data.user.location.substring(13));
+  }
   return (
     <div className="appContainer">
       <Sidebar />
@@ -149,7 +193,7 @@ const Document = ({ history }) => {
               href="https://mtncloud.sharepoint.com/:x:/r/sites/UATApplications/MTNGift/Shared%20Documents/MTN%20GIFT%20TEMPLATE.xlsx?d=wb4a2a6eababa492a985203271496789c&csf=1&web=1&e=nYRPWZ"
               download
             >
-              <button className="gray_mtn">Download template</button>
+              <button className="gray_mtn">Download Template</button>
             </a>
           </div>
           <Navigation />
@@ -194,6 +238,21 @@ const Document = ({ history }) => {
                   justifyContent: "center",
                 }}
               >
+                <div style={{ width: "90%" }} className="mtn__InputContainer">
+                  <PeoplePicker
+                    context={context}
+                    titleText="Search Employee"
+                    personSelectionLimit={1}
+                    groupName="" // Leave this blank in case you want to filter from all users
+                    showtooltip={true}
+                    required={true}
+                    disabled={false}
+                    onChange={getRaterPickerItems}
+                    showHiddenInUI={false}
+                    principalTypes={[PrincipalType.User]}
+                    resolveDelay={1000}
+                  />
+                </div>
                 <div style={{ marginTop: "1rem" }}>
                   <Input
                     value={phone}
