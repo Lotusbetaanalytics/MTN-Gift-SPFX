@@ -94,43 +94,39 @@ const Document = ({ match }) => {
       .items.filter(`Phone eq '${phone}' and UpdateStatus eq 'Approved'`)
       .get()
       .then((res) => {
-        if (res.length > 0) {
-          swal("Warning!", "Employee has already been approved!", "error");
-        } else {
-          sp.web.lists
-            .getByTitle(`GiftBeneficiaries`)
-            .items.getById(itemID)
-            .update({
-              Phone: phone,
-              Surname: surname,
-              FirstName: FirstName,
-              JobTitle: jobTitle,
-              Email: Email,
-              Department: Department,
-              EmployeeLocation: location,
-              PickupLocation: pickupLocation,
-              PickupPerson: pickupPerson,
-              Division: division,
-              Vendor: vendor,
-              UpdateStatus: "Approved",
-            })
-            .then((res) => {
-              setModal(false);
-              setLoading(false);
-              swal("Success", "Success", "success");
-              sp.web.lists
-                .getByTitle(`GiftBeneficiaries`)
-                .items.filter(`ID eq '${itemID}'`)
-                .get()
-                .then((res) => {
-                  setUpdateStatus(res[0].UpdateStatus);
-                });
-            })
-            .catch((e) => {
-              swal("Warning!", "An Error Occured, Try Again!", "error");
-              console.error(e);
-            });
-        }
+        sp.web.lists
+          .getByTitle(`GiftBeneficiaries`)
+          .items.getById(itemID)
+          .update({
+            Phone: phone,
+            Surname: surname,
+            FirstName: FirstName,
+            JobTitle: jobTitle,
+            Email: Email,
+            Department: Department,
+            EmployeeLocation: location,
+            PickupLocation: pickupLocation,
+            PickupPerson: pickupPerson,
+            Division: division,
+            Vendor: vendor,
+            UpdateStatus: "Approved",
+          })
+          .then((res) => {
+            setModal(false);
+            setLoading(false);
+            swal("Success", "Success", "success");
+            sp.web.lists
+              .getByTitle(`GiftBeneficiaries`)
+              .items.filter(`ID eq '${itemID}'`)
+              .get()
+              .then((res) => {
+                setUpdateStatus(res[0].UpdateStatus);
+              });
+          })
+          .catch((e) => {
+            swal("Warning!", "An Error Occured, Try Again!", "error");
+            console.error(e);
+          });
       });
   };
 
