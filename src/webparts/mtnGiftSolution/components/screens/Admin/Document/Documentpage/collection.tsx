@@ -10,7 +10,6 @@ import { useHistory } from "react-router-dom";
 import { sp } from "@pnp/sp";
 import MaterialTable from "material-table";
 
-import swal from "sweetalert";
 import Spinner from "../../../../Containers/Spinner";
 
 const CollectionReport = () => {

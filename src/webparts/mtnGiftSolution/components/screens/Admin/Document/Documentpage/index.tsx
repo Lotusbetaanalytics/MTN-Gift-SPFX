@@ -9,8 +9,6 @@ import {
 import { useHistory } from "react-router-dom";
 import { sp } from "@pnp/sp";
 import MaterialTable from "material-table";
-import { FaEdit, FaTrash, FaEye, FaPlus } from "react-icons/fa";
-import swal from "sweetalert";
 import Spinner from "../../../../Containers/Spinner";
 import { displayIcon } from "../../../../Containers/hooks/tableIcon";
 
@@ -58,9 +56,7 @@ const Document = () => {
   ]);
 
   const [employeeEmail, setEmployeeEmail] = React.useState("");
-
   const [data, setData] = React.useState([]);
-
   const [loading, setLoading] = React.useState(false);
   const [id, setID] = React.useState(null);
   const [query, setQuery] = React.useState("Pending");
@@ -86,6 +82,13 @@ const Document = () => {
     });
   }, []);
 
+  const selectOption = [{ value: "Pending" }, { value: "Approved" }];
+
+  const selectHandler = (e) => {
+    e.preventDefault();
+    setQuery(e.target.value);
+  };
+
   React.useEffect(() => {
     setLoading(true);
     sp.web.lists
@@ -100,17 +103,6 @@ const Document = () => {
 
   const homeHandler = () => {
     history.push("/admin/document/upload");
-  };
-
-  const selectOption = [
-    { value: "Pending" },
-    { value: "Approved" },
-    { value: "Declined" },
-  ];
-
-  const selectHandler = (e) => {
-    e.preventDefault();
-    setQuery(e.target.value);
   };
 
   const approveHandler = (id) => {
@@ -146,10 +138,12 @@ const Document = () => {
             })
             .catch((error) => {
               console.log(error);
+              setLoading(false);
             });
         });
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -189,10 +183,12 @@ const Document = () => {
             })
             .catch((error) => {
               console.log(error);
+              setLoading(false);
             });
         });
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
