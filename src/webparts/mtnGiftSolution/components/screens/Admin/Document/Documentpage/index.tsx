@@ -82,24 +82,17 @@ const Document = () => {
     });
   }, []);
 
-  const selectOption = [{ value: "Pending" }, { value: "Approved" }];
-
-  const selectHandler = (e) => {
-    e.preventDefault();
-    setQuery(e.target.value);
-  };
-
   React.useEffect(() => {
     setLoading(true);
     sp.web.lists
       .getByTitle(`GiftBeneficiaries`)
-      .items.filter(`UpdateStatus eq '${query}'`)
+      .items.filter(`UpdateStatus eq 'Pending'`)
       .getAll()
       .then((res) => {
         setData(res);
         setLoading(false);
       });
-  }, [query]);
+  }, []);
 
   const homeHandler = () => {
     history.push("/admin/document/upload");
@@ -205,15 +198,7 @@ const Document = () => {
           </div>
           <Navigation document="active" />
         </div>
-        <div style={{ width: "120px", marginTop: "30px" }}>
-          <Select
-            onChange={selectHandler}
-            title={query}
-            value={query}
-            options={selectOption}
-            size="mtn__adult"
-          />
-        </div>
+
         <div className="center" style={{ marginTop: "50px" }}>
           {loading ? (
             <Spinner />
